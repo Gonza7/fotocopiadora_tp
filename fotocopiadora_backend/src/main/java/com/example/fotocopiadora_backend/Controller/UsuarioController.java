@@ -46,4 +46,10 @@ public class UsuarioController {
         UsuarioResponseDto usuarioResponseDto = usuarioService.deleteUsuario(id);
         return ResponseEntity.ok(usuarioResponseDto);
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<UsuarioResponseDto> login(@RequestBody @Valid UsuarioRequestDto usuarioRequestDto) {
+        UsuarioResponseDto response = usuarioService.login(usuarioRequestDto);
+        return ResponseEntity.ok(response);
+    }
 }

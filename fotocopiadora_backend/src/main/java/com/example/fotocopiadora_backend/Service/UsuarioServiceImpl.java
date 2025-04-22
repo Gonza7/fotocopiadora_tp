@@ -3,6 +3,7 @@ package com.example.fotocopiadora_backend.Service;
 import com.example.fotocopiadora_backend.Dto.UsuarioRequestDto;
 import com.example.fotocopiadora_backend.Dto.UsuarioResponseDto;
 import com.example.fotocopiadora_backend.Entity.Usuario;
+import com.example.fotocopiadora_backend.Exception.ContraseñaIncorrectaException;
 import com.example.fotocopiadora_backend.Exception.UsuarioNoEncontradoException;
 import com.example.fotocopiadora_backend.Exception.UsuarioYaExisteException;
 import com.example.fotocopiadora_backend.Mapper.UsuarioMapper;
@@ -64,8 +65,12 @@ public class UsuarioServiceImpl implements UsuarioService {
         return usuarioMapper.toDto(usuario);
     }
     @Override
-    public UsuarioResponseDto login(Long id, UsuarioRequestDto usuarioRequestDto) {
-
-        return null;
+    public UsuarioResponseDto login(UsuarioRequestDto usuarioRequestDto) {
+        Usuario usuario = usuarioRepository.findByNombre(usuarioRequestDto.getNombre())
+                .orElseThrow(() -> new UsuarioNoEncontradoException("Usuario no encontrado"));
+        if(!usuario.getContraseña().equals(usuarioRequestDto.getContraseña())){
+            throw new ContraseñaIncorrectaException("Contraseña incorrecta");
+        }
+        return usuarioMapper.toDto(usuario);
     }
 }

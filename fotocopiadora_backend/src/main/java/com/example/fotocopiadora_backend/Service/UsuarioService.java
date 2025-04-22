@@ -11,5 +11,5 @@ public interface UsuarioService {
     List<UsuarioResponseDto> listUsuario();
     UsuarioResponseDto getUsuario(Long id);
     UsuarioResponseDto deleteUsuario(Long id);
-    UsuarioResponseDto login(Long id, UsuarioRequestDto usuarioRequestDto);
+    UsuarioResponseDto login(UsuarioRequestDto usuarioRequestDto);
 }
