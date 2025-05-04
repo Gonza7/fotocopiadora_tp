@@ -1,14 +1,13 @@
-package com.example.fotocopiadora_backend.Service;
+package com.example.fotocopiadora_backend.Service.Usuario;
 
-import com.example.fotocopiadora_backend.Dto.UsuarioRequestDto;
-import com.example.fotocopiadora_backend.Dto.UsuarioResponseDto;
-import com.example.fotocopiadora_backend.Entity.Usuario;
-import com.example.fotocopiadora_backend.Exception.ContraseñaIncorrectaException;
-import com.example.fotocopiadora_backend.Exception.UsuarioNoEncontradoException;
-import com.example.fotocopiadora_backend.Exception.UsuarioYaExisteException;
-import com.example.fotocopiadora_backend.Mapper.UsuarioMapper;
-import com.example.fotocopiadora_backend.Repository.UsuarioRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.fotocopiadora_backend.Dto.Usuario.UsuarioRequestDto;
+import com.example.fotocopiadora_backend.Dto.Usuario.UsuarioResponseDto;
+import com.example.fotocopiadora_backend.Entity.Usuario.Usuario;
+import com.example.fotocopiadora_backend.Exception.Usuario.ContraseñaIncorrectaException;
+import com.example.fotocopiadora_backend.Exception.Usuario.UsuarioNoEncontradoException;
+import com.example.fotocopiadora_backend.Exception.Usuario.UsuarioYaExisteException;
+import com.example.fotocopiadora_backend.Mapper.Usuario.UsuarioMapper;
+import com.example.fotocopiadora_backend.Repository.Usuario.UsuarioRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,10 +27,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         if (usuarioRepository.existsByNombre(usuarioRequestDto.getNombre())) {
             throw new UsuarioYaExisteException("El nombre ya está registrado");
         }
-        System.out.println("DTO: " + usuarioRequestDto.getNombre() + " - " + usuarioRequestDto.getContraseña());
         Usuario usuario = usuarioMapper.toEntity(usuarioRequestDto);
-        System.out.println("Entidad: " + usuario.getNombre() + " - " + usuario.getContraseña());
-
         usuarioRepository.save(usuario);
         return usuarioMapper.toDto(usuario);
     }

@@ -1,8 +1,8 @@
-package com.example.fotocopiadora_backend.Mapper;
+package com.example.fotocopiadora_backend.Mapper.Usuario;
 
-import com.example.fotocopiadora_backend.Dto.UsuarioRequestDto;
-import com.example.fotocopiadora_backend.Dto.UsuarioResponseDto;
-import com.example.fotocopiadora_backend.Entity.Usuario;
+import com.example.fotocopiadora_backend.Dto.Usuario.UsuarioRequestDto;
+import com.example.fotocopiadora_backend.Dto.Usuario.UsuarioResponseDto;
+import com.example.fotocopiadora_backend.Entity.Usuario.Usuario;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;

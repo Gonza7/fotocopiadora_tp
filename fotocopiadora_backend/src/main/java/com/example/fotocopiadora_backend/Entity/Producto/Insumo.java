@@ -1,7 +1,11 @@
-package com.example.fotocopiadora_backend.Entity;
+package com.example.fotocopiadora_backend.Entity.Producto;
 
 import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Entity;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -9,8 +13,8 @@ import lombok.*;
 @AllArgsConstructor
 
 @Entity
-@Table(name = "Usuario")
-public class Usuario {
+@Table(name = "INSUMO")
+public class Insumo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
@@ -18,7 +22,4 @@ public class Usuario {
 
     @Column(name = "NOMBRE", nullable = false)
     private String nombre;
-
-    @Column(name = "CONTRASEÑA", nullable = false)
-    private String contraseña;
 }

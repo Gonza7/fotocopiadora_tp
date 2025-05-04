@@ -1,4 +1,4 @@
-package com.example.fotocopiadora_backend.Dto;
+package com.example.fotocopiadora_backend.Dto.Usuario;
 
 import lombok.*;
 
