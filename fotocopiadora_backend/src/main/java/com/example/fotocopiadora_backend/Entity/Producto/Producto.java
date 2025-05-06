@@ -13,8 +13,8 @@ import lombok.Setter;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "PRODUCTO_VENTA")
-public abstract class ProductoVenta {
+@Table(name = "PRODUCTO")
+public abstract class Producto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")

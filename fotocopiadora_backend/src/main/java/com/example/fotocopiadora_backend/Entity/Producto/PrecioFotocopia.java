@@ -25,5 +25,5 @@ public class PrecioFotocopia {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FOTOCOPIA_ID", referencedColumnName = "ID", nullable = false)
-    private Fotocopia fotocopia;
+    private Producto fotocopia;
 }
