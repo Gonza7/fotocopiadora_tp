@@ -1,7 +1,7 @@
 package com.example.fotocopiadora_backend.Enum;
 
 public enum TipoProducto {
-    KIOSCO,
+    KPRODUCTO_VENTA,
     INSUMO,
-    SERVICIO
+    FOTOCOPIA
 }

@@ -16,5 +16,5 @@ public class PrecioFotocopiaDto {
     private Integer minimo;
 
     @NotNull(message = "El precio unitario no puede estar vacío")
-    private float precioUnitario;
+    private double precioUnitario;
 }

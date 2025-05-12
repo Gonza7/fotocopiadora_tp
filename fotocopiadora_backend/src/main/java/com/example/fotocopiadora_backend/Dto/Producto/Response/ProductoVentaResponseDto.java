@@ -1,7 +1,6 @@
-package com.example.fotocopiadora_backend.Dto.Producto.Request;
+package com.example.fotocopiadora_backend.Dto.Producto.Response;
 
 import com.example.fotocopiadora_backend.Enum.TipoProducto;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 
-public class InsumoRequestDto extends ProductoRequestDto {
-    @NotBlank(message = "El stock no puede estar vacío")
+public class ProductoVentaResponseDto extends ProductoResponseDto {
     private int stock;
+    private double precioUnitario;
 }

@@ -30,10 +30,14 @@ public abstract class Producto {
     @Column(name = "TIPO_PRODUCTO", nullable = false)
     private TipoProducto tipoProducto;
 
-    @Column(name = "PRECIO_UNITARIO")
-    private float precioUnitario;
+    @Column(name = "STOCK")
+    private int stock;
 
-    @Column(name = "PRECIOS_FOTOCOPIA")
+    @Column(name = "PRECIO_UNITARIO")
+    private double precioUnitario;
+
+    @ElementCollection
+    @CollectionTable(name = "PRECIOS_FOTOCOPIA", joinColumns = @JoinColumn(name = "ID_PRODUCTO"))
     private List<PrecioFotocopia> precios;
 
     @Column(name = "SOFT_DELETE", nullable = false)
