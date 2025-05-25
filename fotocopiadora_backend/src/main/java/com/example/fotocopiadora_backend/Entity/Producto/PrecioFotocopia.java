@@ -8,10 +8,14 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 
-@Embeddable
 @Table(name = "PRECIO_FOTOCOPIA")
 
 public class PrecioFotocopia {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID")
+    private Long id;
 
     @Column(name = "MINIMO", nullable = false)
     private Integer minimo;
@@ -19,4 +23,7 @@ public class PrecioFotocopia {
     @Column(name = "PRECIO_UNITARIO", nullable = false)
     private double precioUnitario;
 
+    @ManyToOne
+    @JoinColumn(name = "ID_PRODUCTO", nullable = false)
+    private Producto producto;
 }

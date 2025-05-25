@@ -15,7 +15,6 @@ import java.util.List;
 @AllArgsConstructor
 
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "PRODUCTO")
 public abstract class Producto {
     @Id
@@ -36,8 +35,7 @@ public abstract class Producto {
     @Column(name = "PRECIO_UNITARIO")
     private double precioUnitario;
 
-    @ElementCollection
-    @CollectionTable(name = "PRECIOS_FOTOCOPIA", joinColumns = @JoinColumn(name = "ID_PRODUCTO"))
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PrecioFotocopia> precios;
 
     @Column(name = "SOFT_DELETE", nullable = false)
