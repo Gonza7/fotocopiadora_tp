@@ -7,7 +7,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-
+@Entity
 @Table(name = "PRECIO_FOTOCOPIA")
 
 public class PrecioFotocopia {

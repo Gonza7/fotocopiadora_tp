@@ -11,8 +11,9 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface UsuarioMapper {
-    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "id", ignore = true) // Ignorar el ID al crear un nuevo usuario
     Usuario toEntity(UsuarioRequestDto usuarioRequestDto);
+    @Mapping(source = "id", target = "id") // Mapear el ID del usuario
     UsuarioResponseDto toDto(Usuario usuario);
     List<UsuarioResponseDto> toDtoList(List<Usuario> usuarios);
     void updateUsuarioFromDto(UsuarioRequestDto usuarioRequestDto, @MappingTarget Usuario usuario);

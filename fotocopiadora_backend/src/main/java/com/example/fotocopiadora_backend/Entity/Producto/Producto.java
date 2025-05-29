@@ -16,7 +16,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "PRODUCTO")
-public abstract class Producto {
+public class Producto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
@@ -36,7 +36,8 @@ public abstract class Producto {
     private double precioUnitario;
 
     @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PrecioFotocopia> precios;
+    @Column(name = "PRECIOS_FOTOCOPIA")
+    private List<PrecioFotocopia> preciosFotocopia;
 
     @Column(name = "SOFT_DELETE", nullable = false)
     private boolean softDelete = false;
