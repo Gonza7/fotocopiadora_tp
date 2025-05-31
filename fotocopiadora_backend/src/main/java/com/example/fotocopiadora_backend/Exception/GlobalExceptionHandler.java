@@ -1,7 +1,6 @@
 package com.example.fotocopiadora_backend.Exception;
 
 import com.example.fotocopiadora_backend.Exception.Usuario.ContraseñaIncorrectaException;
-import com.example.fotocopiadora_backend.Exception.Usuario.UsuarioNoEncontradoException;
 import com.example.fotocopiadora_backend.Exception.Usuario.UsuarioYaExisteException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +19,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
-    @ExceptionHandler(UsuarioNoEncontradoException.class)
-    public ResponseEntity<ErrorResponse> handleUsuarioNoEncontrado(UsuarioNoEncontradoException ex) {
-        ErrorResponse error = new ErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
-    }
     @ExceptionHandler(ContraseñaIncorrectaException.class)
     public ResponseEntity<ErrorResponse> handleContraseñaIncorrecta(ContraseñaIncorrectaException ex){
         ErrorResponse error = new ErrorResponse(ex.getMessage(), HttpStatus.UNAUTHORIZED);

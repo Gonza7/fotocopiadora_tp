@@ -13,10 +13,10 @@ import lombok.Setter;
 @AllArgsConstructor
 
 public class ProductoVentaRequestDto extends ProductoRequestDto {
-    @NotBlank(message = "El stock no puede estar vacío")
+    @Min(value = 0, message = "El stock no puede ser negativo")
     private int stock;
 
-    @NotNull(message = "El precio unitario no puede estar vacío")
+    @Min(value = 0, message = "El precio unitario no puede ser negativo")
     private double precioUnitario;
 
 }

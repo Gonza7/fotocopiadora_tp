@@ -15,6 +15,6 @@ import java.util.List;
 @AllArgsConstructor
 
 public class FotocopiaResponseDto extends ProductoResponseDto {
-    private List<PrecioFotocopiaDto> precios;
+    private List<PrecioFotocopiaDto> preciosFotocopia;
 
 }

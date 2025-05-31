@@ -1,6 +1,7 @@
 package com.example.fotocopiadora_backend.Dto.Producto.Request;
 
 import com.example.fotocopiadora_backend.Enum.TipoProducto;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,6 +14,6 @@ import lombok.Setter;
 @AllArgsConstructor
 
 public class InsumoRequestDto extends ProductoRequestDto {
-    @NotBlank(message = "El stock no puede estar vacío")
+    @Min(value=0, message = "El stock no puede ser negativo")
     private int stock;
 }
