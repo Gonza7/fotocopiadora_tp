@@ -14,4 +14,6 @@ public interface ProductoService {
     List<ProductoResponseDto> listProducto();
     List<ProductoResponseDto> listProductoByTipo(TipoProducto tipoProducto);
     List<ProductoResponseDto> listProductoActive();
+    List<ProductoResponseDto> listProductoByTipoAndActive(TipoProducto tipoProducto);
+    ProductoResponseDto activateProducto(Long id);
 }

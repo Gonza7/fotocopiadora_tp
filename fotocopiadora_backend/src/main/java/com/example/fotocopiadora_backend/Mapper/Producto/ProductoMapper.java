@@ -137,7 +137,12 @@ public class ProductoMapper {
         } else if (dto instanceof InsumoRequestDto insumoDto) {
             producto.setStock(insumoDto.getStock());
         } else if (dto instanceof FotocopiaRequestDto fotocopiaDto) {
-            producto.setPreciosFotocopia(toPrecioEntityList(fotocopiaDto.getPreciosFotocopia()));
+            List<PrecioFotocopia> precios = toPrecioEntityList(fotocopiaDto.getPreciosFotocopia());
+            for (PrecioFotocopia precio : precios) {
+                precio.setProducto(producto); // relación inversa
+            }
+            producto.getPreciosFotocopia().clear();
+            producto.getPreciosFotocopia().addAll(precios);
         }
     }
 }

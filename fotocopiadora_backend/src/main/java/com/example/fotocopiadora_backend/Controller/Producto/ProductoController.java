@@ -58,4 +58,16 @@ public class ProductoController {
         List<ProductoResponseDto> productos = productoService.listProductoActive();
         return ResponseEntity.ok(productos);
     }
+
+    @GetMapping("/type/{tipoProducto}/active")
+    public ResponseEntity<List<ProductoResponseDto>> listProductosByTipoAndActive(@PathVariable TipoProducto tipoProducto) {
+        List<ProductoResponseDto> productos = productoService.listProductoByTipoAndActive(tipoProducto);
+        return ResponseEntity.ok(productos);
+    }
+
+    @PutMapping("/activate/{id}")
+    public ResponseEntity<ProductoResponseDto> activateProducto(@PathVariable Long id) {
+        ProductoResponseDto productoResponseDto = productoService.activateProducto(id);
+        return ResponseEntity.ok(productoResponseDto);
+    }
 }

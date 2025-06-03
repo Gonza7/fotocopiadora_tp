@@ -19,6 +19,10 @@ public class ProductoServiceImpl implements ProductoService {
     private final ProductoMapper productoMapper;
 
     public ProductoResponseDto createProducto(ProductoRequestDto productoRequestDto) {
+        if(productoRepository.existsByNombreIgnoreCaseAndTipoProducto(
+                productoRequestDto.getNombre(), productoRequestDto.getTipoProducto())) {
+            throw new IllegalArgumentException("Ya existe un producto con el mismo nombre y tipo");
+        }
         Producto producto = productoMapper.toEntity(productoRequestDto);
         productoRepository.save(producto);
         return productoMapper.toDto(producto);
@@ -26,6 +30,13 @@ public class ProductoServiceImpl implements ProductoService {
     public ProductoResponseDto updateProducto(Long id, ProductoRequestDto productoRequestDto) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado"));
+        if (!producto.getTipoProducto().equals(productoRequestDto.getTipoProducto())) {
+            throw new IllegalArgumentException("No se puede cambiar el tipo de producto en la actualización");
+        }
+        if(productoRepository.existsByNombreIgnoreCaseAndTipoProductoAndIdNot(
+                productoRequestDto.getNombre(), productoRequestDto.getTipoProducto(), id)) {
+            throw new IllegalArgumentException("Ya existe un producto con el mismo nombre y tipo");
+        }
         productoMapper.updateProductoFromDto(productoRequestDto, producto);
         productoRepository.save(producto);
         return productoMapper.toDto(producto);
@@ -38,6 +49,9 @@ public class ProductoServiceImpl implements ProductoService {
     public ProductoResponseDto deleteProducto(Long id) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado"));
+        if (producto.isSoftDelete()) {
+            throw new IllegalArgumentException("El producto ya está eliminado");
+        }
         producto.setSoftDelete(true);
         productoRepository.save(producto);
         return productoMapper.toDto(producto);
@@ -62,5 +76,22 @@ public class ProductoServiceImpl implements ProductoService {
             throw new EntityNotFoundException("No se encontraron productos disponibles");
         }
         return productoMapper.toResponseDtoList(productos);
+    }
+    public List<ProductoResponseDto> listProductoByTipoAndActive(TipoProducto tipoProducto) {
+        List<Producto> productos = productoRepository.findByTipoProductoAndSoftDeleteFalse(tipoProducto);
+        if (productos.isEmpty()) {
+            throw new EntityNotFoundException("No se encontraron productos del tipo: " + tipoProducto + " disponibles");
+        }
+        return productoMapper.toResponseDtoList(productos);
+    }
+    public ProductoResponseDto activateProducto(Long id) {
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado"));
+        if (!producto.isSoftDelete()) {
+            throw new IllegalArgumentException("El producto ya está activo");
+        }
+        producto.setSoftDelete(false);
+        productoRepository.save(producto);
+        return productoMapper.toDto(producto);
     }
 }
