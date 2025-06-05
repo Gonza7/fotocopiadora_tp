@@ -1,14 +1,11 @@
-package com.example.fotocopiadora_backend.Service;
+package com.example.fotocopiadora_backend.Service.Usuario;
 
-import com.example.fotocopiadora_backend.Dto.UsuarioRequestDto;
-import com.example.fotocopiadora_backend.Dto.UsuarioResponseDto;
-import com.example.fotocopiadora_backend.Entity.Usuario;
-import com.example.fotocopiadora_backend.Exception.ContraseñaIncorrectaException;
-import com.example.fotocopiadora_backend.Exception.UsuarioNoEncontradoException;
-import com.example.fotocopiadora_backend.Exception.UsuarioYaExisteException;
-import com.example.fotocopiadora_backend.Mapper.UsuarioMapper;
-import com.example.fotocopiadora_backend.Repository.UsuarioRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.fotocopiadora_backend.Dto.Usuario.UsuarioRequestDto;
+import com.example.fotocopiadora_backend.Dto.Usuario.UsuarioResponseDto;
+import com.example.fotocopiadora_backend.Entity.Usuario.Usuario;
+import com.example.fotocopiadora_backend.Mapper.Usuario.UsuarioMapper;
+import com.example.fotocopiadora_backend.Repository.Usuario.UsuarioRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,21 +23,18 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public UsuarioResponseDto createUsuario(UsuarioRequestDto usuarioRequestDto) {
         if (usuarioRepository.existsByNombre(usuarioRequestDto.getNombre())) {
-            throw new UsuarioYaExisteException("El nombre ya está registrado");
+            throw new IllegalArgumentException("El nombre ya está registrado");
         }
-        System.out.println("DTO: " + usuarioRequestDto.getNombre() + " - " + usuarioRequestDto.getContraseña());
         Usuario usuario = usuarioMapper.toEntity(usuarioRequestDto);
-        System.out.println("Entidad: " + usuario.getNombre() + " - " + usuario.getContraseña());
-
         usuarioRepository.save(usuario);
         return usuarioMapper.toDto(usuario);
     }
     @Override
     public UsuarioResponseDto updateUsuario(Long id, UsuarioRequestDto usuarioRequestDto) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new UsuarioNoEncontradoException("Usuario no encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
         if (usuarioRepository.existsByNombre(usuarioRequestDto.getNombre()) && !usuario.getNombre().equals(usuarioRequestDto.getNombre())) {
-            throw new UsuarioYaExisteException("El nombre ya está registrado");
+            throw new IllegalArgumentException("El nombre ya está registrado");
         }
         usuarioMapper.updateUsuarioFromDto(usuarioRequestDto, usuario);
         usuarioRepository.save(usuario);
@@ -54,22 +48,22 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public UsuarioResponseDto getUsuario(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new UsuarioNoEncontradoException("Usuario no encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
         return usuarioMapper.toDto(usuario);
     }
     @Override
     public UsuarioResponseDto deleteUsuario(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new UsuarioNoEncontradoException("Usuario no encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
         usuarioRepository.deleteById(id);
         return usuarioMapper.toDto(usuario);
     }
     @Override
     public UsuarioResponseDto login(UsuarioRequestDto usuarioRequestDto) {
         Usuario usuario = usuarioRepository.findByNombre(usuarioRequestDto.getNombre())
-                .orElseThrow(() -> new UsuarioNoEncontradoException("Usuario no encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
         if(!usuario.getContraseña().equals(usuarioRequestDto.getContraseña())){
-            throw new ContraseñaIncorrectaException("Contraseña incorrecta");
+            throw new IllegalArgumentException("Contraseña incorrecta");
         }
         return usuarioMapper.toDto(usuario);
     }

@@ -1,6 +1,6 @@
-package com.example.fotocopiadora_backend.Repository;
+package com.example.fotocopiadora_backend.Repository.Usuario;
 
-import com.example.fotocopiadora_backend.Entity.Usuario;
+import com.example.fotocopiadora_backend.Entity.Usuario.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="cd299da6-b3dc-4d44-9c07-36dc120c5dcd" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fotocopiadora_backend/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/fotocopiadora_backend/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fotocopiadora_backend/src/main/java/com/example/fotocopiadora_backend/Dto/Usuario/UsuarioRequestDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/fotocopiadora_backend/src/main/java/com/example/fotocopiadora_backend/Dto/Usuario/UsuarioRequestDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fotocopiadora_backend/src/main/java/com/example/fotocopiadora_backend/Dto/Usuario/UsuarioResponseDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/fotocopiadora_backend/src/main/java/com/example/fotocopiadora_backend/Dto/Usuario/UsuarioResponseDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fotocopiadora_backend/src/main/java/com/example/fotocopiadora_backend/Entity/Producto/PrecioFotocopia.java" beforeDir="false" afterPath="$PROJECT_DIR$/fotocopiadora_backend/src/main/java/com/example/fotocopiadora_backend/Entity/Producto/PrecioFotocopia.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fotocopiadora_backend/src/main/java/com/example/fotocopiadora_backend/Entity/Producto/Producto.java" beforeDir="false" afterPath="$PROJECT_DIR$/fotocopiadora_backend/src/main/java/com/example/fotocopiadora_backend/Entity/Producto/Producto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fotocopiadora_backend/src/main/java/com/example/fotocopiadora_backend/Entity/Usuario/Usuario.java" beforeDir="false" afterPath="$PROJECT_DIR$/fotocopiadora_backend/src/main/java/com/example/fotocopiadora_backend/Entity/Usuario/Usuario.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fotocopiadora_backend/src/main/java/com/example/fotocopiadora_backend/Enum/TipoProducto.java" beforeDir="false" afterPath="$PROJECT_DIR$/fotocopiadora_backend/src/main/java/com/example/fotocopiadora_backend/Enum/TipoProducto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fotocopiadora_backend/src/main/java/com/example/fotocopiadora_backend/Mapper/Usuario/UsuarioMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/fotocopiadora_backend/src/main/java/com/example/fotocopiadora_backend/Mapper/Usuario/UsuarioMapper.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+        <option value="Interface" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="2w6St69QHztC5JvmGfo8ASLC2b9" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.FotocopiadoraBackendApplication.executor&quot;: &quot;Run&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;Spring Boot.FotocopiadoraBackendApplication.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feature/producto&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/gonza/OneDrive/Escritorio/fotocopiadora_tp&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;settings.editor.splitter.proportion&quot;: &quot;0.2790224&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RunManager">
+    <configuration name="FotocopiadoraBackendApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="fotocopiadora_backend" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.fotocopiadora_backend.FotocopiadoraBackendApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.25410.129" />
+        <option value="bundled-js-predefined-d6986cc7102b-6a121458b545-JavaScript-IU-251.25410.129" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="cd299da6-b3dc-4d44-9c07-36dc120c5dcd" name="Changes" comment="" />
+      <created>1745360742291</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1745360742291</updated>
+      <workItem from="1748385556032" duration="1329000" />
+      <workItem from="1748459036958" duration="43000" />
+      <workItem from="1748459128528" duration="1198000" />
+      <workItem from="1748461989021" duration="2727000" />
+      <workItem from="1748466591596" duration="4485000" />
+      <workItem from="1748542019882" duration="2233000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>

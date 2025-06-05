@@ -1,8 +1,8 @@
-package com.example.fotocopiadora_backend.Controller;
+package com.example.fotocopiadora_backend.Controller.Usuario;
 
-import com.example.fotocopiadora_backend.Dto.UsuarioRequestDto;
-import com.example.fotocopiadora_backend.Dto.UsuarioResponseDto;
-import com.example.fotocopiadora_backend.Service.UsuarioService;
+import com.example.fotocopiadora_backend.Dto.Usuario.UsuarioRequestDto;
+import com.example.fotocopiadora_backend.Dto.Usuario.UsuarioResponseDto;
+import com.example.fotocopiadora_backend.Service.Usuario.UsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

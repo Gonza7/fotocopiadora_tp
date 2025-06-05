@@ -1,7 +1,7 @@
-package com.example.fotocopiadora_backend.Service;
+package com.example.fotocopiadora_backend.Service.Usuario;
 
-import com.example.fotocopiadora_backend.Dto.UsuarioRequestDto;
-import com.example.fotocopiadora_backend.Dto.UsuarioResponseDto;
+import com.example.fotocopiadora_backend.Dto.Usuario.UsuarioRequestDto;
+import com.example.fotocopiadora_backend.Dto.Usuario.UsuarioResponseDto;
 
 import java.util.List;
 

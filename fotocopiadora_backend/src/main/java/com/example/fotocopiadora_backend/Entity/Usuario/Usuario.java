@@ -1,15 +1,14 @@
-package com.example.fotocopiadora_backend.Entity;
+package com.example.fotocopiadora_backend.Entity.Usuario;
 
 import jakarta.persistence.*;
 import lombok.*;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 
 @Entity
-@Table(name = "Usuario")
+@Table(name = "USUARIO")
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
