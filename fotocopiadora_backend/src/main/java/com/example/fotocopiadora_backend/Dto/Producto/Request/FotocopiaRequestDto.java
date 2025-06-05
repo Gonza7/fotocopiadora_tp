@@ -2,6 +2,7 @@ package com.example.fotocopiadora_backend.Dto.Producto.Request;
 
 import com.example.fotocopiadora_backend.Dto.Producto.PrecioFotocopiaDto;
 import com.example.fotocopiadora_backend.Enum.TipoProducto;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 public class FotocopiaRequestDto extends ProductoRequestDto {
     @NotEmpty(message = "La lista de precios no puede estar vacía")
+    @Valid
     private List<PrecioFotocopiaDto> preciosFotocopia;
 
 }

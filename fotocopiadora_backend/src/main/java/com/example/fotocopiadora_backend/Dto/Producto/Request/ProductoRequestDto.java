@@ -28,9 +28,11 @@ import lombok.Setter;
 })
 
 public abstract class ProductoRequestDto {
+    @NotNull(message = "El mínimo no puede ser nulo")
     @NotBlank(message = "El nombre no puede estar vacío")
     private String nombre;
 
+    @NotNull(message = "El precio no puede ser nulo")
     @NotNull(message = "El tipo de producto no puede estar vacío")
     private TipoProducto tipoProducto;
 }
