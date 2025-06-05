@@ -14,7 +14,9 @@ import com.example.fotocopiadora_backend.Entity.Producto.Producto;
 import com.example.fotocopiadora_backend.Enum.TipoProducto;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -65,6 +67,7 @@ public class ProductoMapper {
         Producto producto = new Producto();
         producto.setNombre(dto.getNombre());
         producto.setTipoProducto(TipoProducto.FOTOCOPIA);
+        validarPreciosFotocopiaUnicos(dto.getPreciosFotocopia());
         List<PrecioFotocopia> precios = toPrecioEntityList(dto.getPreciosFotocopia());
         for (PrecioFotocopia precio : precios) {
             precio.setProducto(producto); // <- Establecer la relación inversa
@@ -94,6 +97,7 @@ public class ProductoMapper {
         dto.setStock(producto.getStock());
         dto.setPrecioUnitario(producto.getPrecioUnitario());
         dto.setTipoProducto(producto.getTipoProducto());
+        dto.setSoftDelete(producto.isSoftDelete());
         return dto;
     }
 
@@ -103,6 +107,7 @@ public class ProductoMapper {
         dto.setNombre(producto.getNombre());
         dto.setStock(producto.getStock());
         dto.setTipoProducto(producto.getTipoProducto());
+        dto.setSoftDelete(producto.isSoftDelete());
         return dto;
     }
 
@@ -112,6 +117,7 @@ public class ProductoMapper {
         dto.setNombre(producto.getNombre());
         dto.setTipoProducto(producto.getTipoProducto());
         dto.setPreciosFotocopia(toPrecioDtoList(producto.getPreciosFotocopia()));
+        dto.setSoftDelete(producto.isSoftDelete());
         return dto;
     }
 
@@ -137,12 +143,22 @@ public class ProductoMapper {
         } else if (dto instanceof InsumoRequestDto insumoDto) {
             producto.setStock(insumoDto.getStock());
         } else if (dto instanceof FotocopiaRequestDto fotocopiaDto) {
+            validarPreciosFotocopiaUnicos(fotocopiaDto.getPreciosFotocopia());
             List<PrecioFotocopia> precios = toPrecioEntityList(fotocopiaDto.getPreciosFotocopia());
             for (PrecioFotocopia precio : precios) {
                 precio.setProducto(producto); // relación inversa
             }
             producto.getPreciosFotocopia().clear();
             producto.getPreciosFotocopia().addAll(precios);
+        }
+    }
+
+    private void validarPreciosFotocopiaUnicos(List<PrecioFotocopiaDto> preciosFotocopia) {
+        Set<Integer> minimos = new HashSet<>();
+        for (PrecioFotocopiaDto precio : preciosFotocopia) {
+            if (!minimos.add(precio.getMinimo())) {
+                throw new IllegalArgumentException("No puede haber dos precios con el mismo valor mínimo para una fotocopia");
+            }
         }
     }
 }

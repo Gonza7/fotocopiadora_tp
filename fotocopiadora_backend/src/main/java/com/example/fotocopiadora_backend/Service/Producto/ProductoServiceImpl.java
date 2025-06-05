@@ -18,6 +18,7 @@ public class ProductoServiceImpl implements ProductoService {
     private final ProductoRepository productoRepository;
     private final ProductoMapper productoMapper;
 
+    @Override
     public ProductoResponseDto createProducto(ProductoRequestDto productoRequestDto) {
         if(productoRepository.existsByNombreIgnoreCaseAndTipoProducto(
                 productoRequestDto.getNombre(), productoRequestDto.getTipoProducto())) {
@@ -27,6 +28,8 @@ public class ProductoServiceImpl implements ProductoService {
         productoRepository.save(producto);
         return productoMapper.toDto(producto);
     }
+
+    @Override
     public ProductoResponseDto updateProducto(Long id, ProductoRequestDto productoRequestDto) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado"));
@@ -41,11 +44,15 @@ public class ProductoServiceImpl implements ProductoService {
         productoRepository.save(producto);
         return productoMapper.toDto(producto);
     }
+
+    @Override
     public ProductoResponseDto getProducto(Long id) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado"));
         return productoMapper.toDto(producto);
     }
+
+    @Override
     public ProductoResponseDto deleteProducto(Long id) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado"));
@@ -56,6 +63,8 @@ public class ProductoServiceImpl implements ProductoService {
         productoRepository.save(producto);
         return productoMapper.toDto(producto);
     }
+
+    @Override
     public List<ProductoResponseDto> listProducto() {
         List<Producto> productos = productoRepository.findAll();
         if (productos.isEmpty()) {
@@ -63,6 +72,8 @@ public class ProductoServiceImpl implements ProductoService {
         }
         return productoMapper.toResponseDtoList(productos);
     }
+
+    @Override
     public List<ProductoResponseDto> listProductoByTipo(TipoProducto tipoProducto) {
         List<Producto> productos = productoRepository.findByTipoProductoAndSoftDeleteFalse(tipoProducto);
         if (productos.isEmpty()) {
@@ -70,6 +81,8 @@ public class ProductoServiceImpl implements ProductoService {
         }
         return productoMapper.toResponseDtoList(productos);
     }
+
+    @Override
     public List<ProductoResponseDto> listProductoActive() {
         List<Producto> productos = productoRepository.findBySoftDeleteFalse();
         if (productos.isEmpty()) {
@@ -77,6 +90,8 @@ public class ProductoServiceImpl implements ProductoService {
         }
         return productoMapper.toResponseDtoList(productos);
     }
+
+    @Override
     public List<ProductoResponseDto> listProductoByTipoAndActive(TipoProducto tipoProducto) {
         List<Producto> productos = productoRepository.findByTipoProductoAndSoftDeleteFalse(tipoProducto);
         if (productos.isEmpty()) {
@@ -84,6 +99,8 @@ public class ProductoServiceImpl implements ProductoService {
         }
         return productoMapper.toResponseDtoList(productos);
     }
+
+    @Override
     public ProductoResponseDto activateProducto(Long id) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado"));

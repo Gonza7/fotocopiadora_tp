@@ -1,7 +1,0 @@
-package com.example.fotocopiadora_backend.Exception.Usuario;
-
-public class UsuarioYaExisteException extends RuntimeException {
-    public UsuarioYaExisteException(String message) {
-        super(message);
-    }
-}
