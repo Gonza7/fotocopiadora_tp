@@ -34,6 +34,9 @@ public class Venta {
     @Column(name = "PRECIO_TOTAL", nullable = false)
     private double precioTotal;
 
+    @Column(name = "SOFT_DELETE", nullable = false)
+    private boolean softDelete = false;
+
     @PrePersist
     public void prePersist() {
         this.fechaPago = LocalDateTime.now();

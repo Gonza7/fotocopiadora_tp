@@ -8,13 +8,12 @@ import com.example.fotocopiadora_backend.Entity.Producto.PrecioFotocopia;
 import com.example.fotocopiadora_backend.Entity.Producto.Producto;
 import com.example.fotocopiadora_backend.Entity.Venta.DetalleVenta;
 import com.example.fotocopiadora_backend.Entity.Venta.Venta;
+import com.example.fotocopiadora_backend.Enum.TipoProducto;
 import com.example.fotocopiadora_backend.Repository.Producto.ProductoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
@@ -28,9 +27,21 @@ public class VentaMapper {
         List<DetalleVenta> detalles = new ArrayList<>();
         double total = 0;
 
+        Set<Long> productosId = new HashSet<>();
+
         for (DetalleVentaRequestDto detalleDto : dto.getDetallesVenta()) {
-            Producto producto = productoRepository.findById(detalleDto.getIdProducto())
+            Long idProducto = detalleDto.getIdProducto();
+
+            if(!productosId.add(idProducto)){
+                throw new IllegalArgumentException("El producto ya esta registrado en la venta");
+            }
+
+            Producto producto = productoRepository.findByIdAndSoftDeleteFalse(idProducto)
                     .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado con ID: " + detalleDto.getIdProducto()));
+
+            if(!(producto.getTipoProducto() == TipoProducto.PRODUCTO_VENTA || producto.getTipoProducto() == TipoProducto.FOTOCOPIA)){
+                throw new IllegalArgumentException("El producto no es válido para venta");
+            }
 
             DetalleVenta detalle = new DetalleVenta();
             detalle.setVenta(venta);
@@ -71,7 +82,7 @@ public class VentaMapper {
         dto.setFormaPago(venta.getFormaPago());
         dto.setFechaPago(venta.getFechaPago());
         dto.setPrecioTotal(venta.getPrecioTotal());
-
+        dto.setSoftDelete(venta.isSoftDelete());
         List<DetalleVentaResponseDto> detallesDto = new ArrayList<>();
         for (DetalleVenta detalle : venta.getDetalleVenta()) {
             DetalleVentaResponseDto detalleDto = new DetalleVentaResponseDto();
@@ -87,5 +98,54 @@ public class VentaMapper {
         return ventas.stream()
                 .map(this::toDto)
                 .toList();
+    }
+
+    public void updateEntityFromDto(Venta venta, VentaRequestDto dto) {
+        venta.setFormaPago(dto.getFormaPago());
+
+        List<DetalleVenta> detalles = new ArrayList<>();
+        double total = 0;
+
+        Set<Long> productosId = new HashSet<>();
+
+        for (DetalleVentaRequestDto detalleDto : dto.getDetallesVenta()) {
+            Long idProducto = detalleDto.getIdProducto();
+
+            if(!productosId.add(idProducto)){
+                throw new IllegalArgumentException("El producto ya esta registrado en la venta");
+            }
+
+            Producto producto = productoRepository.findByIdAndSoftDeleteFalse(idProducto)
+                    .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado con ID: " + detalleDto.getIdProducto()));
+
+            if(!(producto.getTipoProducto() == TipoProducto.PRODUCTO_VENTA || producto.getTipoProducto() == TipoProducto.FOTOCOPIA)){
+                throw new IllegalArgumentException("El producto no es válido para venta");
+            }
+
+            DetalleVenta detalle = new DetalleVenta();
+            detalle.setVenta(venta);
+            detalle.setProducto(producto);
+            detalle.setCantidad(detalleDto.getCantidad());
+
+            DetalleVenta existingDetalle = venta.getDetalleVenta().stream()
+                    .filter(d -> d.getProducto().getId().equals(producto.getId()))
+                    .findFirst()
+                    .orElse(null);
+
+            double precioUnitario;
+
+            if(existingDetalle != null && existingDetalle.getProducto().getId().equals(producto.getId())){
+                precioUnitario = existingDetalle.getPrecioUnitario();
+            } else {
+                precioUnitario = obtenerPrecioUnitario(producto, detalleDto.getCantidad());
+            }
+            detalle.setPrecioUnitario(precioUnitario);
+
+            total += precioUnitario * detalleDto.getCantidad();
+            detalles.add(detalle);
+        }
+
+        venta.setDetalleVenta(detalles);
+        venta.setPrecioTotal(total);
     }
 }

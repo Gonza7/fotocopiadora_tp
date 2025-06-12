@@ -17,4 +17,5 @@ public class VentaResponseDto {
     private LocalDateTime fechaPago;
     private double precioTotal;
     private List<DetalleVentaResponseDto> detallesVenta;
+    private boolean softDelete;
 }
