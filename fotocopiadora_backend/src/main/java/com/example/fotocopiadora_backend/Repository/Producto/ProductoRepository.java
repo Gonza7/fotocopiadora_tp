@@ -6,11 +6,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ProductoRepository extends JpaRepository<Producto, Long> {
     List<Producto> findBySoftDeleteFalse();
-    List<Producto> findByNombreContainingIgnoreCaseAndSoftDeleteFalse(String nombre);
+    Optional<Producto> findByIdAndSoftDeleteFalse(Long id);
     List<Producto> findByTipoProducto(TipoProducto tipoProducto);
     List<Producto> findByTipoProductoAndSoftDeleteFalse(TipoProducto tipoProducto);
     boolean existsByNombreIgnoreCaseAndTipoProducto(String nombre, TipoProducto tipoProducto);
