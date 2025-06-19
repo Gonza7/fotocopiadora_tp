@@ -88,6 +88,7 @@ public class VentaMapper {
             DetalleVentaResponseDto detalleDto = new DetalleVentaResponseDto();
             detalleDto.setProducto(detalle.getProducto().getNombre());
             detalleDto.setCantidad(detalle.getCantidad());
+            detalleDto.setPrecioUnitario(detalle.getPrecioUnitario());
             detallesDto.add(detalleDto);
         }
         dto.setDetallesVenta(detallesDto);
@@ -145,7 +146,8 @@ public class VentaMapper {
             detalles.add(detalle);
         }
 
-        venta.setDetalleVenta(detalles);
+        venta.getDetalleVenta().clear();
+        venta.getDetalleVenta().addAll(detalles);
         venta.setPrecioTotal(total);
     }
 }
