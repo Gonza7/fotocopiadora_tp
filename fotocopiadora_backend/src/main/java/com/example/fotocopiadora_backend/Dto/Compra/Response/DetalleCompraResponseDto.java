@@ -12,6 +12,4 @@ public class DetalleCompraResponseDto {
     private String producto;
     private int cantidad;
     private EstadoCompra estadoCompra;
-    private boolean softDelete;
-
 }

@@ -14,7 +14,8 @@ import java.util.List;
 public class CompraResponseDto {
     private Long id;
     private LocalDateTime fechaPago;
-    private List<CompraResponseDto> detalleCompra;
+    private String proveedor;
+    private List<DetalleCompraResponseDto> detalleCompra;
     private double monto;
     private EstadoCompra estadoCompra;
     private boolean softDelete;

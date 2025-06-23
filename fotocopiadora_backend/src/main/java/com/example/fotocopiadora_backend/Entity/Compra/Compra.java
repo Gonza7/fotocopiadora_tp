@@ -24,12 +24,16 @@ public class Compra {
     @Column(name = "FECHA_PAGO", nullable = false)
     private LocalDateTime fechaPago;
 
+    @Column(name = "PROVEEDOR", nullable = false)
+    private String proveedor;
+
     @OneToMany(mappedBy = "compra", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DetalleCompra> detalleCompra;
 
     @Column(name = "MONTO", nullable = false)
     private double monto;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "ESTADO", nullable = false)
     private EstadoCompra estadoCompra;
 

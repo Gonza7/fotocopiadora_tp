@@ -2,6 +2,7 @@ package com.example.fotocopiadora_backend.Entity.Compra;
 
 import com.example.fotocopiadora_backend.Entity.Producto.Producto;
 import com.example.fotocopiadora_backend.Entity.Venta.Venta;
+import com.example.fotocopiadora_backend.Enum.EstadoCompra;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,10 +25,13 @@ public class DetalleCompra {
     private Producto producto;
 
     @ManyToOne
-    @JoinColumn(name = "ID_VENTA", nullable = false)
-    private Venta venta;
+    @JoinColumn(name = "ID_COMPRA", nullable = false)
+    private Compra compra;
 
     @Column(name = "CANTIDAD", nullable = false)
     private int cantidad;
 
+    @Column(name = "ESTADO_COMPRA", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private EstadoCompra estadoCompra;
 }

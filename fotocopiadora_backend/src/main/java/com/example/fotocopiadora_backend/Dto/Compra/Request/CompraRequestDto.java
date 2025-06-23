@@ -13,6 +13,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CompraRequestDto {
+    @NotNull(message = "El proveedor no puede ser nulo")
+    private String proveedor;
+
     @NotNull(message = "La lista de detalles no puede estar vacia")
     @Valid
     private List<DetalleCompraRequestDto> detalleCompra;
