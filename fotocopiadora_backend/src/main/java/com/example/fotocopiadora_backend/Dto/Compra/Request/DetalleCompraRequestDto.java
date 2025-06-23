@@ -1,4 +1,4 @@
-package com.example.fotocopiadora_backend.Dto.Venta.Request;
+package com.example.fotocopiadora_backend.Dto.Compra.Request;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -7,9 +7,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class DetalleVentaRequestDto {
+@AllArgsConstructor
+public class DetalleCompraRequestDto {
     @NotNull(message = "El id del producto no puede estar vacio")
     private Long idProducto;
 
