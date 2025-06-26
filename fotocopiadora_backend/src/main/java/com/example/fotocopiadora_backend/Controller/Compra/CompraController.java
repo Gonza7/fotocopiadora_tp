@@ -7,6 +7,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,13 +25,13 @@ public class CompraController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<CompraResponseDto>> listCompra(Pageable pageable) {
+    public ResponseEntity<Page<CompraResponseDto>> listCompra(@PageableDefault(size = 10, sort = "fechaPago", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<CompraResponseDto> compras = compraService.listCompra(pageable);
         return ResponseEntity.ok(compras);
     }
 
     @GetMapping("/active")
-    public ResponseEntity<Page<CompraResponseDto>> listCompraActive(Pageable pageable) {
+    public ResponseEntity<Page<CompraResponseDto>> listCompraActive(@PageableDefault(size = 10, sort = "fechaPago", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<CompraResponseDto> compras = compraService.listCompraActive(pageable);
         return ResponseEntity.ok(compras);
     }

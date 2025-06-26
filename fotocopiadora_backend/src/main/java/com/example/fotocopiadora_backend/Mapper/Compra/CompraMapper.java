@@ -64,6 +64,7 @@ public class CompraMapper {
         dto.setId(compra.getId());
         dto.setProveedor(compra.getProveedor());
         dto.setMonto(compra.getMonto());
+        dto.setFechaPago(compra.getFechaPago());
         dto.setEstadoCompra(compra.getEstadoCompra());
         dto.setSoftDelete(compra.isSoftDelete());
 

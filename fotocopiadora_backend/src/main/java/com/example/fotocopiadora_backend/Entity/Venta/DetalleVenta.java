@@ -33,6 +33,4 @@ public class DetalleVenta {
     @Column(name = "PRECIO_UNITARIO", nullable = false)
     private double precioUnitario;
 
-    @Column(name = "ESTADO", nullable = false)
-    private EstadoCompra estadoCompra;
 }

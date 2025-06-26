@@ -8,6 +8,7 @@ import com.example.fotocopiadora_backend.Enum.EstadoCompra;
 import com.example.fotocopiadora_backend.Mapper.Compra.CompraMapper;
 import com.example.fotocopiadora_backend.Repository.Compra.CompraRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,8 +17,8 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class CompraServiceImpl implements CompraService {
-    private CompraRepository compraRepository;
-    private CompraMapper compraMapper;
+    private final CompraRepository compraRepository;
+    private final CompraMapper compraMapper;
 
     @Override
     public CompraResponseDto createCompra(CompraRequestDto compraRequestDto) {
@@ -67,26 +68,39 @@ public class CompraServiceImpl implements CompraService {
     }
 
     @Override
-    public CompraResponseDto updateEstadoCompra(Long idCompra, Long idDetalle) {
+    @Transactional
+    public CompraResponseDto updateEstadoCompra(Long idCompra, Long idProducto) {
         Compra compra = compraRepository.findById(idCompra)
-                .orElseThrow(() -> new EntityNotFoundException("Compra no encontrada"));
-        DetalleCompra detalleCompra= compra.getDetalleCompra().stream()
-                .filter(detalle -> detalle.getId().equals(idDetalle))
+                .orElseThrow(() -> new EntityNotFoundException("Compra no encontrada con ID: " + idCompra));
+
+        // Buscar el detalle dentro de la compra
+        DetalleCompra detalle = compra.getDetalleCompra().stream()
+                .filter(d -> d.getProducto().getId().equals(idProducto))
                 .findFirst()
-                .orElseThrow(() -> new EntityNotFoundException("Detalle de compra no encontrado"));
-        if (detalleCompra.getEstadoCompra() == EstadoCompra.FINALIZADO) {
-            throw new IllegalArgumentException("La compra ya está finalizada");
+                .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado con ID: " + idProducto + "compra:" + idCompra));
+
+        // Validar estado actual
+        if (detalle.getEstadoCompra() == EstadoCompra.FINALIZADO) {
+            throw new IllegalArgumentException("Este detalle ya fue finalizado");
         }
-        detalleCompra.setEstadoCompra(EstadoCompra.FINALIZADO);
-        compra.getDetalleCompra().removeIf(detalle -> detalle.getId().equals(idDetalle));
-        compra.getDetalleCompra().add(detalleCompra);
-        if( compra.getDetalleCompra().stream().allMatch(detalle -> detalle.getEstadoCompra() == EstadoCompra.FINALIZADO)) {
+
+        // Cambiar el estado del detalle
+        detalle.setEstadoCompra(EstadoCompra.FINALIZADO);
+
+        // Verificar si todos los detalles están finalizados
+        boolean todosFinalizados = compra.getDetalleCompra().stream()
+                .allMatch(d -> d.getEstadoCompra() == EstadoCompra.FINALIZADO);
+
+        if (todosFinalizados) {
             compra.setEstadoCompra(EstadoCompra.FINALIZADO);
-        }
-         else {
+        } else {
             compra.setEstadoCompra(EstadoCompra.PENDIENTE);
         }
+
+        // Guardar la compra con el cambio en cascada
         compraRepository.save(compra);
+
+        // Retornar el DTO de respuesta
         return compraMapper.toDto(compra);
     }
 
