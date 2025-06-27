@@ -1,6 +1,7 @@
-package com.example.fotocopiadora_backend.Entity.Venta;
+package com.example.fotocopiadora_backend.Entity.Compra;
 
 import com.example.fotocopiadora_backend.Entity.Producto.Producto;
+import com.example.fotocopiadora_backend.Entity.Venta.Venta;
 import com.example.fotocopiadora_backend.Enum.EstadoCompra;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,12 +9,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 
 @Entity
-@Table(name = "DETALLE_VENTA")
-public class DetalleVenta {
+@Table(name = "DETALLE_COMPRA")
+public class DetalleCompra {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
@@ -24,13 +25,13 @@ public class DetalleVenta {
     private Producto producto;
 
     @ManyToOne
-    @JoinColumn(name = "ID_VENTA", nullable = false)
-    private Venta venta;
+    @JoinColumn(name = "ID_COMPRA", nullable = false)
+    private Compra compra;
 
     @Column(name = "CANTIDAD", nullable = false)
     private int cantidad;
 
-    @Column(name = "PRECIO_UNITARIO", nullable = false)
-    private double precioUnitario;
-
+    @Column(name = "ESTADO_COMPRA", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private EstadoCompra estadoCompra;
 }
