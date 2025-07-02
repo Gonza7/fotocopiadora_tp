@@ -1,14 +1,13 @@
 <template>
   <v-container class="fill-height d-flex justify-center align-center">
     <v-card width="400">
-      <v-card-title class="text-h6">Iniciar Sesión</v-card-title>
+      <v-card-title class="text-h6">Crear Usuario</v-card-title>
       <v-card-text>
         <form @submit.prevent="login">
         <v-text-field label="Usuario" v-model="usuario.nombre" :error-messages="errors.nombre ? [errors.nombre] : []"/>
-        <v-text-field label="Contraseña" :type="showPassword ? 'text' : 'password'" v-model="usuario.contraseña" :error-messages="errors.contraseña ? [errors.contraseña] : []" :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-          @click:append="showPassword = !showPassword"/>
-        <v-btn @click="login" type="submit" block color="primary">Entrar</v-btn>
-        <v-btn @click="signup" block color="secondary" class="mt-4">Crear Usuario</v-btn>
+        <v-text-field label="Contraseña"v-model="usuario.contraseña" :error-messages="errors.contraseña ? [errors.contraseña] : []"/>
+        <v-text-field label="Confirmar contraseña" v-model="confirmarContraseña" :error-messages="errors.confirmar"/>
+        <v-btn type="submit" @click="createUsuario" block color="primary">Entrar</v-btn>
         <v-alert
           v-if="generalError"
           type="error"
@@ -29,8 +28,7 @@
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import { ref } from 'vue'
-import { useUsuarioStore } from '@/stores/usuarioStore'
-const usuarioStore = useUsuarioStore()
+
 export default{
   data: () => ({
     usuario: {
@@ -39,17 +37,20 @@ export default{
     },
     errors: {},
     generalError: '',
-    showPassword: false
+    confirmarContraseña: ''
   }),
   methods: {
-    async login() {
+    async createUsuario() {
       this.errors = {};
       this.generalError = '';
       console.log(this.usuario);
+      if (this.usuario.contraseña !== this.confirmarContraseña) {
+        this.errors.confirmar = ["Las contraseñas no coinciden"];
+        return;
+      }
       try{
-        const response = await axios.post("http://localhost:8080/api/usuario/login",this.usuario);
-        usuarioStore.setNombre(response.data.nombre)
-        this.$router.push('/home');
+        const response = await axios.post("http://localhost:8080/api/usuario",this.usuario);
+        this.$router.push('/');
       } catch (error) {
         if (error.response && error.response.data) {
           const data = error.response.data
@@ -68,9 +69,6 @@ export default{
         }
       }
     },
-    signup (){
-      this.$router.push('/signup');
-    }
   }
 }
 </script>
