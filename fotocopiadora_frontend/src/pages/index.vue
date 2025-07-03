@@ -5,10 +5,10 @@
       <v-card-text>
         <form @submit.prevent="login">
         <v-text-field label="Usuario" v-model="usuario.nombre" :error-messages="errors.nombre ? [errors.nombre] : []"/>
-        <v-text-field label="Contraseña" :type="showPassword ? 'text' : 'password'" v-model="usuario.contraseña" :error-messages="errors.contraseña ? [errors.contraseña] : []" :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-          @click:append="showPassword = !showPassword"/>
+        <v-text-field label="Contraseña" :type="showPassword ? 'text' : 'password'" v-model="usuario.contraseña" :error-messages="errors.contraseña ? [errors.contraseña] : []" :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+          @click:append-inner="showPassword = !showPassword"/>
         <v-btn @click="login" type="submit" block color="primary">Entrar</v-btn>
-        <v-btn @click="signup" block color="secondary" class="mt-4">Crear Usuario</v-btn>
+        <v-btn @click="signup" block color="secondary" class="mt-2">Crear Usuario</v-btn>
         <v-alert
           v-if="generalError"
           type="error"

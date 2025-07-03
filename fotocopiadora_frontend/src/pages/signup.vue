@@ -7,7 +7,8 @@
         <v-text-field label="Usuario" v-model="usuario.nombre" :error-messages="errors.nombre ? [errors.nombre] : []"/>
         <v-text-field label="Contraseña"v-model="usuario.contraseña" :error-messages="errors.contraseña ? [errors.contraseña] : []"/>
         <v-text-field label="Confirmar contraseña" v-model="confirmarContraseña" :error-messages="errors.confirmar"/>
-        <v-btn type="submit" @click="createUsuario" block color="primary">Entrar</v-btn>
+        <v-btn type="submit" @click="createUsuario" block color="primary">Registrar</v-btn>
+        <v-btn type="submit" @click="returnLogin" block color="secondary" class="mt-2">Volver</v-btn>
         <v-alert
           v-if="generalError"
           type="error"
@@ -69,6 +70,9 @@ export default{
         }
       }
     },
+    returnLogin() {
+      this.$router.push('/');
+    }
   }
 }
 </script>
