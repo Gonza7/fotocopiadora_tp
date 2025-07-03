@@ -30,6 +30,7 @@ import { useRouter } from 'vue-router'
 import axios from 'axios'
 import { ref } from 'vue'
 import { useUsuarioStore } from '@/stores/usuarioStore'
+import { loginService } from '@/services/usuarioService'
 const usuarioStore = useUsuarioStore()
 export default{
   data: () => ({
@@ -47,7 +48,7 @@ export default{
       this.generalError = '';
       console.log(this.usuario);
       try{
-        const response = await axios.post("http://localhost:8080/api/usuario/login",this.usuario);
+        const response = await loginService(this.usuario);
         usuarioStore.setNombre(response.data.nombre)
         this.$router.push('/home');
       } catch (error) {

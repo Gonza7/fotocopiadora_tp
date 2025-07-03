@@ -28,6 +28,7 @@
 <script>
 import { useRouter } from 'vue-router'
 import axios from 'axios'
+import { createUsuarioService } from '@/services/usuarioService'
 import { ref } from 'vue'
 
 export default{
@@ -50,7 +51,7 @@ export default{
         return;
       }
       try{
-        const response = await axios.post("http://localhost:8080/api/usuario",this.usuario);
+        const response = await createUsuarioService(this.usuario);
         this.$router.push('/');
       } catch (error) {
         if (error.response && error.response.data) {

@@ -2,14 +2,16 @@ import { defineStore } from 'pinia'
 
 export const useUsuarioStore = defineStore('usuario', {
   state: () => ({
-    nombre: '' // Este valor se cargará al iniciar sesión
+    nombre: JSON.parse(localStorage.getItem('nombre')) || null,
   }),
   actions: {
-    setNombre(nombre) {
-      this.nombre = nombre
+    setNombre(data) {
+      this.nombre = data;
+      localStorage.setItem('nombre', JSON.stringify(data));
     },
     clear() {
-      this.nombre = ''
+      this.nombre = null,
+      localStorage.removeItem('nombre')
     }
   },
 })
