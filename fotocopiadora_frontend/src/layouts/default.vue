@@ -1,10 +1,12 @@
 <template>
-  <Navbar v-if="showNav"/>
-  <v-main>
-    <router-view />
-  </v-main>
-
-  <AppFooter />
+  <v-app>
+    <Navbar v-if="showNav"/>
+    <v-main>
+      <router-view />
+    </v-main>
+    <AppFooter />
+  </v-app>
+  
 </template>
 
 <script setup>
@@ -13,7 +15,6 @@ import { useRoute } from 'vue-router'
 const route = useRoute()
 
   const showNav = computed(() => {
-  // Oculta navbar/sidebar en login y signup, por ejemplo
   return !['/', '/signup'].includes(route.path)
 })
 </script>
