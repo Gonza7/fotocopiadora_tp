@@ -5,7 +5,7 @@
         <h1 class="text-h5">Productos</h1>
       </v-col>
       <v-col cols="auto">
-        <v-btn color="primary" @click="abrirDialogo">Agregar Producto</v-btn>
+        <v-btn color="primary" @click="openDialog">Agregar Producto</v-btn>
       </v-col>
     </v-row>
   <v-data-table
@@ -62,13 +62,20 @@
       </v-chip>
     </template>
 
-    
+    <template v-slot:item.acciones="{ item }">
+      <v-btn icon @click="openDetalles(item)"><v-icon>mdi-eye</v-icon></v-btn>
+      <v-btn icon @click="updateProducto(item)"><v-icon>mdi-pencil</v-icon></v-btn>
+      <v-btn icon @click="deleteProducto(item)"><v-icon color="red">mdi-delete</v-icon></v-btn>
+    </template>
   </v-data-table>
+
   </v-container>
 </template>
 
 <script>
-  import { getProductoService, listProductosService } from '@/services/productoService';
+  import { getProductoService, listProductosService, deleteProductoService, activateProductoService } from '@/services/productoService';
+  import FormProducto from '@/components/Producto/FormProducto.vue';
+  import DetalleProducto from '@/components/Producto/DetalleProducto.vue';
   export default{
     data() {
       return {
@@ -82,6 +89,22 @@
         ],
         productos: [],
         tiposProducto: ['INSUMO', 'PRODUCTO_VENTA', 'FOTOCOPIA'],
+        filtroTipos: [],
+        filtroEstado: null,
+        dialog: false,
+        producto: null,
+        dialogDetalle: false,
+        productoDetalle: null,
+        isUpdate: false
+      }
+    },
+    computed: {
+      productosFiltrados() {
+        return this.productos.filter(p => {
+          const tipoCoincide = !this.filtroTipos.length || this.filtroTipos.includes(p.tipoProducto);
+          const estadoCoincide = this.filtroEstado === null || (this.filtroEstado === 'Activo' && !p.softDelete) || (this.filtroEstado === 'Inactivo' && p.softDelete);
+          return tipoCoincide && estadoCoincide;
+        });
       }
     },
     methods: {
@@ -95,6 +118,30 @@
         } finally {
           this.loading = false;
         }
+      },
+      openDialog() {
+        this.producto = null;
+        this.isUpdate = false;
+        this.dialog = true;
+      },
+      closeDialog() {
+        this.dialog = false;
+      },
+      updateProducto(producto) {
+        this.producto = { ...producto };
+        this.isUpdate = true;
+        this.dialog = true;
+      },
+      async saveProducto(){
+        await this.listProductos();
+      },
+      async deleteProducto(producto) {
+        await deleteProductoService(producto.id);
+        await this.listProductos();
+      },
+      openDetalles(producto) {
+        this.productoDetalle = producto;
+        this.dialogDetalle = true;
       },
       traducirTipo(tipo) {
         const map = {
