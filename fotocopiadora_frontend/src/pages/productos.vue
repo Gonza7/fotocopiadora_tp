@@ -5,7 +5,7 @@
         <h1 class="text-h5">Productos</h1>
       </v-col>
       <v-col cols="auto">
-        <v-btn color="primary" @click="openDialog">Agregar Producto</v-btn>
+        <v-btn color="primary" @click="openDialog()">Agregar Producto</v-btn>
       </v-col>
     </v-row>
   <v-data-table
@@ -62,20 +62,88 @@
       </v-chip>
     </template>
 
-    <template v-slot:item.acciones="{ item }">
-      <v-btn icon @click="openDetalles(item)"><v-icon>mdi-eye</v-icon></v-btn>
-      <v-btn icon @click="updateProducto(item)"><v-icon>mdi-pencil</v-icon></v-btn>
-      <v-btn icon @click="deleteProducto(item)"><v-icon color="red">mdi-delete</v-icon></v-btn>
+    <template #item.actions="{ item }">
+      <v-icon small @click="openDialog(item)">mdi-pencil</v-icon>
+      <v-icon small @click="deleteProducto(item)">mdi-delete</v-icon>
     </template>
+    
   </v-data-table>
 
+  <v-dialog v-model="dialog" max-width="600px">
+      <v-card>
+        <v-card-title>
+          <span class="text-h6">{{ form.id ? 'Editar' : 'Nuevo' }} Producto</span>
+        </v-card-title>
+
+        <v-card-text>
+          <v-form ref="formRef">
+            <v-text-field v-model="form.nombre" label="Nombre" required />
+
+            <v-select
+              v-model="form.tipo"
+              :items="tipos"
+              label="Tipo de Producto"
+              required
+              :disabled="form.id != null"
+            />
+
+            <v-text-field
+              v-if="form.tipo === 'Producto Venta'"
+              v-model.number="form.precioUnitario"
+              label="Precio Unitario"
+              type="number"
+              min="0"
+              required
+            />
+
+            <v-text-field
+              v-if="form.tipo === 'Producto Venta' || form.tipo === 'Insumo'"
+              v-model.number="form.stock"
+              label="Stock"
+              type="number"
+              min="0"
+            />
+
+            <!-- Lista de precios para Fotocopias -->
+            <div v-if="form.tipo === 'Fotocopia'">
+              <div v-for="(precio, index) in form.listaPrecios" :key="index" class="d-flex gap-2 align-center">
+                <v-text-field
+                  v-model.number="precio.minimo"
+                  label="Cantidad mínima"
+                  type="number"
+                  class="flex-grow-1"
+                />
+                <v-text-field
+                  v-model.number="precio.precioUnitario"
+                  label="Precio unitario"
+                  type="number"
+                  class="flex-grow-1"
+                />
+                <v-btn icon @click="form.listaPrecios.splice(index, 1)">
+                  <v-icon>mdi-delete</v-icon>
+                </v-btn>
+              </div>
+              <v-btn class="mt-2" @click="form.listaPrecios.push({ cantidadMinima: 0, precioUnitario: 0 })" small>
+                Agregar precio
+              </v-btn>
+            </div>
+
+            <v-switch v-model="form.activo" label="Activo" />
+          </v-form>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer />
+          <v-btn text @click="dialog = false">Cancelar</v-btn>
+          <v-btn color="primary" @click="save">Guardar</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
 <script>
-  import { getProductoService, listProductosService, deleteProductoService, activateProductoService } from '@/services/productoService';
-  import FormProducto from '@/components/Producto/FormProducto.vue';
-  import DetalleProducto from '@/components/Producto/DetalleProducto.vue';
+  import { getProductoService, listProductosService, createProductoService, updateProductoService, deleteProductoService, activateProductoService } from '@/services/productoService';
   export default{
     data() {
       return {
@@ -89,22 +157,8 @@
         ],
         productos: [],
         tiposProducto: ['INSUMO', 'PRODUCTO_VENTA', 'FOTOCOPIA'],
-        filtroTipos: [],
-        filtroEstado: null,
         dialog: false,
-        producto: null,
-        dialogDetalle: false,
-        productoDetalle: null,
-        isUpdate: false
-      }
-    },
-    computed: {
-      productosFiltrados() {
-        return this.productos.filter(p => {
-          const tipoCoincide = !this.filtroTipos.length || this.filtroTipos.includes(p.tipoProducto);
-          const estadoCoincide = this.filtroEstado === null || (this.filtroEstado === 'Activo' && !p.softDelete) || (this.filtroEstado === 'Inactivo' && p.softDelete);
-          return tipoCoincide && estadoCoincide;
-        });
+        form: this.resetForm()
       }
     },
     methods: {
@@ -119,30 +173,6 @@
           this.loading = false;
         }
       },
-      openDialog() {
-        this.producto = null;
-        this.isUpdate = false;
-        this.dialog = true;
-      },
-      closeDialog() {
-        this.dialog = false;
-      },
-      updateProducto(producto) {
-        this.producto = { ...producto };
-        this.isUpdate = true;
-        this.dialog = true;
-      },
-      async saveProducto(){
-        await this.listProductos();
-      },
-      async deleteProducto(producto) {
-        await deleteProductoService(producto.id);
-        await this.listProductos();
-      },
-      openDetalles(producto) {
-        this.productoDetalle = producto;
-        this.dialogDetalle = true;
-      },
       traducirTipo(tipo) {
         const map = {
           INSUMO: 'Insumo',
@@ -150,10 +180,49 @@
           FOTOCOPIA: 'Fotocopia'
         };
         return map[tipo] || tipo;
+      },
+      openDialog(producto = null) {
+        this.form = producto ? JSON.parse(JSON.stringify(producto)) : this.resetForm();
+        if (this.form.tipo === 'Fotocopia' && !this.form.listaPrecios) {
+          this.form.listaPrecios = [];
+        }
+        this.dialog = true;
+      },
+      async save() {
+      if (this.form.id) {
+        // Editar producto
+        await updateProductoService(this.form.id, this.form);
+      } else {
+        // Crear producto
+        await createProductoService(this.form);
       }
+      this.dialog = false;
+      this.loadProductos();
     },
+      async deleteProducto(producto) {
+        try {
+          await deleteProductoService(producto.id);
+          this.listProductos();
+        } catch (error) {
+          console.error('Error al eliminar producto:', error);
+        }
+      },
+      tipoLabel(tipo) {
+        return tipo;
+      },
+      resetForm() {
+        return {
+          id: null,
+          nombre: '',
+          tipo: '',
+          precioUnitario: null,
+          stock: null,
+          listaPrecios: [],
+        };
+      },
     mounted() {
       this.listProductos();
     }
   }
+}
 </script>
