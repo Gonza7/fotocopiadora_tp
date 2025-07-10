@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-  <v-row class="justify-space-between align-center mb-2 mx-2">
+    <v-row class="justify-space-between align-center mb-2 mx-2">
       <v-col>
         <h1 class="text-h5">Productos</h1>
       </v-col>
@@ -8,71 +8,81 @@
         <v-btn color="primary" @click="openDialog()">Agregar Producto</v-btn>
       </v-col>
     </v-row>
-  <v-data-table
-    :headers="headers"
-    :items="productos"
-    class="elevation-1"
-    :search="search"
-    :loading="loading"
-    :sort-by="[{ key: 'id', order: 'asc' }]"
-    :filter-keys="['nombre']"
-  >
-   <template v-slot:top>
-      <v-row class="ma-2" align="center" justify="space-between">
-        <v-col cols="12" md="4">
-          <v-text-field
-            v-model="search"
-            label="Buscar por nombre"
-            dense
-            clearable
-          />
-        </v-col>
+    <v-data-table
+      :headers="headers"
+      :items="productosFiltrados"
+      class="elevation-1"
+      :search="search"
+      :loading="loading"
+      :sort-by="[{ key: 'id', order: 'asc' }]"
+      :filter-keys="['nombre']"
+    >
+      <template v-slot:top>
+        <v-row class="ma-2" align="center" justify="space-between">
+          <v-col cols="12" md="4">
+            <v-text-field
+              v-model="search"
+              label="Buscar por nombre"
+              dense
+              clearable
+            />
+          </v-col>
 
-        <v-col cols="12" md="4">
-          <v-select
-            v-model="filtroTipos"
-            :items="tiposProducto"
-            label="Filtrar por tipo"
-            multiple
-            chips
-            dense
-            clearable
-          />
-        </v-col>
+          <v-col cols="12" md="4">
+            <v-select
+              v-model="filtroTipos"
+              :items="tiposProducto"
+              label="Filtrar por tipo"
+              multiple
+              chips
+              dense
+              clearable
+            />
+          </v-col>
 
-        <v-col cols="12" md="4">
-          <v-select
-            v-model="filtroEstado"
-            :items="['Activo', 'Inactivo']"
-            label="Estado"
-            dense
-            clearable
-          />
-        </v-col>
-      </v-row>
-    </template>
+          <v-col cols="12" md="4">
+            <v-select
+              v-model="filtroEstado"
+              :items="['Activo', 'Inactivo']"
+              label="Estado"
+              dense
+              clearable
+            />
+          </v-col>
+        </v-row>
+      </template>
 
-    <template v-slot:item.tipoProducto="{ item }">
-      {{ traducirTipo(item.tipoProducto) }}
-    </template>
+      <template v-slot:item.tipoProducto="{ item }">
+        {{ traducirTipo(item.tipoProducto) }}
+      </template>
 
-    <template v-slot:item.softDelete="{ item }">
-      <v-chip :color="item.softDelete ? 'error' : 'success'" dark>
-        {{ item.softDelete ? 'Inactivo' : 'Activo' }}
-      </v-chip>
-    </template>
+      <template v-slot:item.softDelete="{ item }">
+        <v-chip :color="item.softDelete ? 'error' : 'success'" dark>
+          {{ item.softDelete ? "Inactivo" : "Activo" }}
+        </v-chip>
+      </template>
 
-    <template #item.actions="{ item }">
-      <v-icon small @click="openDialog(item)">mdi-pencil</v-icon>
-      <v-icon small @click="deleteProducto(item)">mdi-delete</v-icon>
-    </template>
-    
-  </v-data-table>
+      <template #item.actions="{ item }">
+        <v-icon small @click="openDialog(item)">mdi-pencil</v-icon>
+        <v-btn
+          icon
+          @click="
+            item.softDelete ? activarProducto(item) : deleteProducto(item)
+          "
+        >
+          <v-icon :color="item.softDelete ? 'green' : 'red'">
+            {{ item.softDelete ? "mdi-restore" : "mdi-delete" }}
+          </v-icon>
+        </v-btn>
+      </template>
+    </v-data-table>
 
-  <v-dialog v-model="dialog" max-width="600px">
+    <v-dialog v-model="dialog" max-width="600px">
       <v-card>
         <v-card-title>
-          <span class="text-h6">{{ form.id ? 'Editar' : 'Nuevo' }} Producto</span>
+          <span class="text-h6"
+            >{{ form.id ? "Editar" : "Nuevo" }} Producto</span
+          >
         </v-card-title>
 
         <v-card-text>
@@ -82,13 +92,15 @@
             <v-select
               v-model="form.tipo"
               :items="tipos"
+              item-title="label"
+              item-value="value"
               label="Tipo de Producto"
               required
               :disabled="form.id != null"
             />
 
             <v-text-field
-              v-if="form.tipo === 'Producto Venta'"
+              v-if="form.tipo === 'PRODUCTO_VENTA'"
               v-model.number="form.precioUnitario"
               label="Precio Unitario"
               type="number"
@@ -97,7 +109,7 @@
             />
 
             <v-text-field
-              v-if="form.tipo === 'Producto Venta' || form.tipo === 'Insumo'"
+              v-if="form.tipo === 'PRODUCTO_VENTA' || form.tipo === 'INSUMO'"
               v-model.number="form.stock"
               label="Stock"
               type="number"
@@ -105,8 +117,12 @@
             />
 
             <!-- Lista de precios para Fotocopias -->
-            <div v-if="form.tipo === 'Fotocopia'">
-              <div v-for="(precio, index) in form.listaPrecios" :key="index" class="d-flex gap-2 align-center">
+            <div v-if="form.tipo === 'FOTOCOPIA'">
+              <div
+                v-for="(precio, index) in form.listaPrecios"
+                :key="index"
+                class="d-flex gap-2 align-center"
+              >
                 <v-text-field
                   v-model.number="precio.minimo"
                   label="Cantidad mínima"
@@ -123,7 +139,16 @@
                   <v-icon>mdi-delete</v-icon>
                 </v-btn>
               </div>
-              <v-btn class="mt-2" @click="form.listaPrecios.push({ cantidadMinima: 0, precioUnitario: 0 })" small>
+              <v-btn
+                class="mt-2"
+                @click="
+                  form.listaPrecios.push({
+                    cantidadMinima: 0,
+                    precioUnitario: 0,
+                  })
+                "
+                small
+              >
                 Agregar precio
               </v-btn>
             </div>
@@ -143,86 +168,138 @@
 </template>
 
 <script>
-  import { getProductoService, listProductosService, createProductoService, updateProductoService, deleteProductoService, activateProductoService } from '@/services/productoService';
-  export default{
-    data() {
-      return {
-        loading: true,
-        search: '',
-        headers: [
-          { title: 'ID', key: 'id' },
-          { title: 'Nombre', key: 'nombre' },
-          { title: 'Tipo', key: 'tipoProducto' },
-          { title: 'Estado', key: 'softDelete' }
-        ],
-        productos: [],
-        tiposProducto: ['INSUMO', 'PRODUCTO_VENTA', 'FOTOCOPIA'],
-        dialog: false,
-        form: this.resetForm()
+import {
+  getProductoService,
+  listProductosService,
+  createProductoService,
+  updateProductoService,
+  deleteProductoService,
+  activateProductoService,
+} from "@/services/productoService";
+export default {
+  data() {
+    return {
+      loading: true,
+      search: "",
+      headers: [
+        { title: "ID", key: "id" },
+        { title: "Nombre", key: "nombre" },
+        { title: "Tipo", key: "tipoProducto" },
+        { title: "Estado", key: "softDelete" },
+        { title: "Acciones", key: "actions", sortable: false },
+      ],
+      productos: [],
+      tiposProducto: ["INSUMO", "PRODUCTO_VENTA", "FOTOCOPIA"],
+      dialog: false,
+      form: this.resetForm(),
+      tipos: [
+        { label: "Producto Venta", value: "PRODUCTO_VENTA" },
+        { label: "Insumo", value: "INSUMO" },
+        { label: "Fotocopia", value: "FOTOCOPIA" },
+      ],
+      filtroTipos: [],
+      filtroEstado: null,
+    };
+  },
+  methods: {
+    async listProductos() {
+      this.loading = true;
+      try {
+        const response = await listProductosService();
+        this.productos = response.data;
+      } catch (error) {
+        console.error("Error al listar productos:", error);
+      } finally {
+        this.loading = false;
       }
     },
-    methods: {
-      async listProductos() {
-        this.loading = true;
-        try {
-          const response = await listProductosService();
-          this.productos = response.data;
-        } catch (error) {
-          console.error('Error al listar productos:', error);
-        } finally {
-          this.loading = false;
+    traducirTipo(tipo) {
+      const map = {
+        INSUMO: "Insumo",
+        PRODUCTO_VENTA: "Producto Venta",
+        FOTOCOPIA: "Fotocopia",
+      };
+      return map[tipo] || tipo;
+    },
+    openDialog(producto = null) {
+      if (producto) {
+        const formCopy = JSON.parse(JSON.stringify(producto));
+        formCopy.tipo = formCopy.tipoProducto;
+
+        if (formCopy.tipo === "FOTOCOPIA") {
+          formCopy.listaPrecios = formCopy.preciosFotocopia;
         }
-      },
-      traducirTipo(tipo) {
-        const map = {
-          INSUMO: 'Insumo',
-          PRODUCTO_VENTA: 'Producto Venta',
-          FOTOCOPIA: 'Fotocopia'
-        };
-        return map[tipo] || tipo;
-      },
-      openDialog(producto = null) {
-        this.form = producto ? JSON.parse(JSON.stringify(producto)) : this.resetForm();
-        if (this.form.tipo === 'Fotocopia' && !this.form.listaPrecios) {
-          this.form.listaPrecios = [];
-        }
-        this.dialog = true;
-      },
-      async save() {
-      if (this.form.id) {
-        // Editar producto
-        await updateProductoService(this.form.id, this.form);
+
+        this.form = formCopy;
       } else {
-        // Crear producto
-        await createProductoService(this.form);
+        this.form = this.resetForm();
       }
-      this.dialog = false;
-      this.loadProductos();
+
+      this.dialog = true;
     },
-      async deleteProducto(producto) {
-        try {
-          await deleteProductoService(producto.id);
-          this.listProductos();
-        } catch (error) {
-          console.error('Error al eliminar producto:', error);
-        }
-      },
-      tipoLabel(tipo) {
-        return tipo;
-      },
-      resetForm() {
-        return {
-          id: null,
-          nombre: '',
-          tipo: '',
-          precioUnitario: null,
-          stock: null,
-          listaPrecios: [],
+    async save() {
+      try {
+        const dataToSend = {
+          ...this.form,
+          tipoProducto: this.form.tipo,
         };
-      },
-    mounted() {
+
+        if (this.form.tipo === "FOTOCOPIA") {
+          dataToSend.preciosFotocopia = this.form.listaPrecios;
+          delete dataToSend.listaPrecios;
+        }
+
+        if (this.form.id) {
+          await updateProductoService(this.form.id, dataToSend);
+        } else {
+          await createProductoService(dataToSend);
+        }
+
+        this.dialog = false;
+        this.listProductos();
+      } catch (error) {
+        console.error("Error al guardar producto:", error);
+      }
+    },
+    async deleteProducto(producto) {
+      await deleteProductoService(producto.id);
       this.listProductos();
-    }
-  }
-}
+    },
+    async activarProducto(producto) {
+      await activateProductoService(producto.id);
+      this.listProductos();
+    },
+    tipoLabel(tipo) {
+      return tipo;
+    },
+    resetForm() {
+      return {
+        id: null,
+        nombre: "",
+        tipo: "",
+        precioUnitario: null,
+        stock: null,
+        listaPrecios: [],
+      };
+    },
+  },
+  mounted() {
+    this.listProductos();
+  },
+  computed: {
+    productosFiltrados() {
+      return this.productos.filter((p) => {
+        const coincideTipo =
+          this.filtroTipos.length === 0 ||
+          this.filtroTipos.includes(p.tipoProducto);
+        const coincideEstado =
+          !this.filtroEstado ||
+          (this.filtroEstado === "Activo" && !p.softDelete) ||
+          (this.filtroEstado === "Inactivo" && p.softDelete);
+
+        return coincideTipo && coincideEstado;
+      });
+    },
+  },
+};
 </script>
