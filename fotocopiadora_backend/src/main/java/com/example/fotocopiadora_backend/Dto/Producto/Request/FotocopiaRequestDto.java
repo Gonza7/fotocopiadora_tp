@@ -17,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 public class FotocopiaRequestDto extends ProductoRequestDto {
     @NotEmpty(message = "La lista de precios no puede estar vacía")
+    @Size(min = 1, message = "Debe haber al menos un precio definido")
     @Valid
     private List<PrecioFotocopiaDto> preciosFotocopia;
 

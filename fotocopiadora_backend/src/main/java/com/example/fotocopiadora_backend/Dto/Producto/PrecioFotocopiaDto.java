@@ -13,9 +13,11 @@ import lombok.Setter;
 @AllArgsConstructor
 
 public class PrecioFotocopiaDto {
+    @NotNull(message = "El mínimo de copias no puede ser nulo")
     @Min(value = 1, message = "El mínimo de copias debe ser al menos 1")
     private Integer minimo;
 
-    @Min(value = 0, message = "El precio unitario no puede ser negativo")
-    private double precioUnitario;
+    @NotNull(message = "El precio unitario no puede ser nulo")
+    @Min(value = 1, message = "El precio unitario no puede ser menor a 1")
+    private Double precioUnitario;
 }

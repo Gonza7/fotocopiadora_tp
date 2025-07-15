@@ -14,9 +14,11 @@ import lombok.Setter;
 
 public class ProductoVentaRequestDto extends ProductoRequestDto {
     @Min(value = 0, message = "El stock no puede ser negativo")
-    private int stock;
+    @NotNull(message = "El stock no puede ser nulo")
+    private Integer stock;
 
-    @Min(value = 0, message = "El precio unitario no puede ser negativo")
-    private double precioUnitario;
+    @Min(value = 1, message = "El precio unitario no puede ser menor a 1")
+    @NotNull(message = "El precio unitario no puede ser nulo")
+    private Double precioUnitario;
 
 }
