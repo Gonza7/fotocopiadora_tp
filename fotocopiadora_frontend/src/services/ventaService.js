@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API_URL = 'http://localhost:8080/api/ventas'
+const API_URL = 'http://localhost:8080/api/venta'
 
 export const listVentasService = () => axios.get(`${API_URL}`)
 export const listVentasActiveService = () => axios.get(`${API_URL}/active`)

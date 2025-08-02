@@ -11,7 +11,13 @@ declare module 'vue' {
     AppFooter: typeof import('./src/components/AppFooter.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     Navbar: typeof import('./src/components/Navbar.vue')['default']
+    ProductoDetail: typeof import('./src/components/producto/ProductoDetail.vue')['default']
+    ProductoDialog: typeof import('./src/components/producto/ProductoDialog.vue')['default']
+    ProductoList: typeof import('./src/components/producto/ProductoList.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    VentaDetail: typeof import('./src/components/venta/VentaDetail.vue')['default']
+    VentaDialog: typeof import('./src/components/venta/VentaDialog.vue')['default']
+    VentaList: typeof import('./src/components/venta/VentaList.vue')['default']
   }
 }

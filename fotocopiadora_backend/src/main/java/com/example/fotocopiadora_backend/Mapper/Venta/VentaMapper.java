@@ -86,7 +86,8 @@ public class VentaMapper {
         List<DetalleVentaResponseDto> detallesDto = new ArrayList<>();
         for (DetalleVenta detalle : venta.getDetalleVenta()) {
             DetalleVentaResponseDto detalleDto = new DetalleVentaResponseDto();
-            detalleDto.setProducto(detalle.getProducto().getNombre());
+            detalleDto.setIdProducto(detalle.getProducto().getId());
+            detalleDto.setNombreProducto(detalle.getProducto().getNombre());
             detalleDto.setCantidad(detalle.getCantidad());
             detalleDto.setPrecioUnitario(detalle.getPrecioUnitario());
             detallesDto.add(detalleDto);

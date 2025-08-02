@@ -1,18 +1,18 @@
 <template>
   <v-app>
     <v-main>
-      <VentaList />
+      <ProductoList />
     </v-main>
   </v-app>
 </template>
 
 <script>
-import VentaList from '@/components/venta/VentaList.vue';
+import ProductoList from '@/components/producto/ProductoList.vue';
 
 export default {
   name: 'App',
   components: {
-    VentaList,
+    ProductoList,
   },
 };
 </script>
