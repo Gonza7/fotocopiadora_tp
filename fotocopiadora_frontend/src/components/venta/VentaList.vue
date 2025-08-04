@@ -26,10 +26,11 @@
             <v-select
               v-model="filtroFormaPago"
               :items="formasPago"
+              item-title="title"
+              item-value="value"
               label="Filtrar por forma de pago"
               clearable
               dense
-              item-text="label"   item-value="value"
             />
           </v-col>
 
@@ -64,16 +65,18 @@
       </template>
 
       <template #item.actions="{ item }">
-        <v-icon small @click="abrirDialogo(item)">mdi-pencil</v-icon>
-        <v-btn
-          icon
-          @click="item.softDelete ? activarVenta(item) : eliminarVenta(item)"
-          class="elevation-0"
-        >
-          <v-icon :color="item.softDelete ? 'green' : 'red'">
-            {{ item.softDelete ? "mdi-restore" : "mdi-delete" }}
-          </v-icon>
-        </v-btn>
+        <div class="d-flex flex-nowrap align-center">
+          <v-icon small @click="abrirDialogo(item)">mdi-pencil</v-icon>
+          <v-btn
+            icon
+            @click="item.softDelete ? activarVenta(item) : eliminarVenta(item)"
+            class="elevation-0 ml-1"
+          >
+            <v-icon :color="item.softDelete ? 'green' : 'red'">
+              {{ item.softDelete ? "mdi-restore" : "mdi-delete" }}
+            </v-icon>
+          </v-btn>
+        </div>
       </template>
 
       <template #expanded-row="{ columns, item }">
@@ -123,8 +126,8 @@ export default {
       ],
       ventas: [],
       formasPago: [
-        { label: "Efectivo", value: "EFECTIVO" },
-        { label: "Transferencia", value: "TRANSFERENCIA" },
+        { title: "Efectivo", value: "EFECTIVO" },
+        { title: "Transferencia", value: "TRANSFERENCIA" },
       ],
       dialog: false,
       ventaAEditar: null, // Guardará la venta a editar
@@ -159,14 +162,16 @@ export default {
     },
     abrirDialogo(venta = null) {
       // Para la edición, necesitamos el id de los productos en detalleVenta para el formulario
-      this.ventaAEditar = venta ? {
-        ...venta,
-        detallesVenta: venta.detallesVenta.map(detalle => ({
-          idProducto: detalle.idProducto,
-          nombreProducto: detalle.nombreProducto,
-          cantidad: detalle.cantidad,
-        }))
-      } : null;
+      this.ventaAEditar = venta
+        ? {
+            ...venta,
+            detallesVenta: venta.detallesVenta.map((detalle) => ({
+              idProducto: detalle.idProducto,
+              nombreProducto: detalle.nombreProducto,
+              cantidad: detalle.cantidad,
+            })),
+          }
+        : null;
 
       if (!this.ventaAEditar) {
         // Resetear el formulario al abrirlo para una nueva venta

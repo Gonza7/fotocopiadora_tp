@@ -31,6 +31,8 @@
             <v-select
               v-model="filtroTipos"
               :items="tiposProducto"
+              item-title="title"
+              item-value="value"
               label="Filtrar por tipo"
               multiple
               chips
@@ -62,6 +64,7 @@
       </template>
 
       <template #item.actions="{ item }">
+        <div class="d-flex flex-nowrap align-center">
         <v-icon small @click="openDialog(item)">mdi-pencil</v-icon>
         <v-btn
           icon
@@ -72,6 +75,7 @@
             {{ item.softDelete ? "mdi-restore" : "mdi-delete" }}
           </v-icon>
         </v-btn>
+        </div>
       </template>
 
       <template #expanded-row="{ columns, item }">
@@ -119,7 +123,11 @@ export default {
         { title: "", key: "data-table-expand" },
       ],
       productos: [],
-      tiposProducto: ["INSUMO", "PRODUCTO_VENTA", "FOTOCOPIA"],
+      tiposProducto: [
+        { title: "Insumo", value: "INSUMO" },
+        { title: "Producto Venta", value: "PRODUCTO_VENTA" },
+        { title: "Fotocopia", value: "FOTOCOPIA" },
+      ],
       dialog: false,
       productToEdit: null, // Guardará el producto a editar
       filtroTipos: [],

@@ -71,7 +71,8 @@ public class CompraMapper {
         List<DetalleCompraResponseDto> detallesDto = new ArrayList<>();
         for (DetalleCompra detalle : compra.getDetalleCompra()) {
             DetalleCompraResponseDto detalleDto = new DetalleCompraResponseDto();
-            detalleDto.setProducto(detalle.getProducto().getNombre());
+            detalleDto.setIdProducto(detalle.getProducto().getId());
+            detalleDto.setNombreProducto(detalle.getProducto().getNombre());
             detalleDto.setCantidad(detalle.getCantidad());
             detalleDto.setEstadoCompra(detalle.getEstadoCompra());
             detallesDto.add(detalleDto);

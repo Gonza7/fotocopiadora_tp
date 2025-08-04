@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DetalleCompraResponseDto {
-    private String producto;
+    private Long idProducto;
+    private String nombreProducto;
     private int cantidad;
     private EstadoCompra estadoCompra;
 }

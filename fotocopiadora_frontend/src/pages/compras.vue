@@ -1,9 +1,18 @@
 <template>
   <v-app>
-    <h1>Compras</h1>
+    <v-main>
+      <CompraList />
+    </v-main>
   </v-app>
 </template>
 
-<script setup>
+<script>
+import CompraList from '@/components/compra/CompraList.vue';
 
+export default {
+  name: 'App',
+  components: {
+    CompraList,
+  },
+};
 </script>

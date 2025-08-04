@@ -135,12 +135,13 @@ public class VentaMapper {
                     .orElse(null);
 
             double precioUnitario;
-
-            if(existingDetalle != null && existingDetalle.getProducto().getId().equals(producto.getId())){
-                precioUnitario = existingDetalle.getPrecioUnitario();
+            if (producto.getTipoProducto() == TipoProducto.FOTOCOPIA) {
+               precioUnitario = obtenerPrecioUnitario(producto, detalleDto.getCantidad());
             } else {
-                precioUnitario = obtenerPrecioUnitario(producto, detalleDto.getCantidad());
+                // Para PRODUCTO_VENTA, simplemente usa el precio base del producto
+                precioUnitario = producto.getPrecioUnitario();
             }
+
             detalle.setPrecioUnitario(precioUnitario);
 
             total += precioUnitario * detalleDto.getCantidad();

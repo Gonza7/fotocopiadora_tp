@@ -7,26 +7,23 @@
     <v-card>
       <v-card-title>
         <span class="text-h6"
-          >{{ form.id ? "Editar" : "Registrar" }} Venta</span
+          >{{ form.id ? "Editar" : "Registrar" }} Compra</span
         >
       </v-card-title>
 
       <v-card-text>
         <v-form ref="formRef">
-          <v-select
-            v-model="form.formaPago"
-            :items="formasPago"
-            item-title="label"
-            item-value="value"
-            label="Forma de Pago"
+          <v-text-field
+            v-model="form.proveedor"
+            label="Proveedor"
             required
-            :error-messages="errors.formaPago ? [errors.formaPago] : []"
-            @input="errors.formaPago = null"
+            :error-messages="errors.proveedor ? [errors.proveedor] : []"
+            @input="errors.proveedor = null"
           />
 
-          <h3 class="mt-4 mb-2">Detalles de Venta</h3>
+          <h3 class="mt-4 mb-2">Detalles de Compra</h3>
           <div
-            v-for="(detalle, index) in form.detallesVenta"
+            v-for="(detalle, index) in form.detalleCompra"
             :key="index"
             class="d-flex align-center gap-2 mb-2"
           >
@@ -36,6 +33,7 @@
               item-title="nombre"
               item-value="id"
               label="Producto"
+              placeholder="Escribe para buscar un producto"
               class="flex-grow-1"
               required
               :error-messages="
@@ -95,10 +93,10 @@
 
 <script>
 import {
-  createVentaService,
-  updateVentaService,
-} from "@/services/ventaService"; // Asegúrate de tener tus servicios de ventas
-import { listProductosService } from "@/services/productoService"; // Necesario para obtener los productos disponibles
+  createCompraService,
+  updateCompraService,
+} from "@/services/compraService";
+import { listProductosService } from "@/services/productoService";
 
 export default {
   props: {
@@ -106,65 +104,61 @@ export default {
       type: Boolean,
       required: true,
     },
-    ventaAEditar: {
+    compraAEditar: {
       type: Object,
       default: null,
     },
   },
-  emits: ["update:dialog", "venta-guardada"],
+  emits: ["update:dialog", "compra-guardada"],
   data() {
     return {
       form: this.resetearFormulario(),
-      formasPago: [
-        { label: "Efectivo", value: "EFECTIVO" },
-        { label: "Transferencia", value: "TRANSFERENCIA" },
-      ],
-      productosDisponibles: [], // Aquí se cargarán los productos para el select
+      productosDisponibles: [],
       errors: {},
       errorGeneral: "",
-      errorsDetalle: [], // Errores para los detalles de venta
+      errorsDetalle: [],
     };
   },
   watch: {
-    ventaAEditar: {
-      handler(newVal) {
-        if (newVal) {
-          // Clonamos la venta
-          const venta = JSON.parse(JSON.stringify(newVal));
-
-          // Transformamos cada idProducto en objeto completo
-          venta.detallesVenta = venta.detallesVenta.map((detalle) => {
-            const producto = this.productosDisponibles.find(
-              (p) => p.id === detalle.idProducto
-            );
-            return {
-              ...detalle,
-              idProducto: producto || null, // objeto completo o null
-            };
+    dialog: {
+      handler(val) {
+        if (val) {
+          // Cargar productos primero
+          this.cargarProductos().then(() => {
+            // Una vez que los productos estén cargados, configurar el formulario
+            if (this.compraAEditar) {
+              const compra = JSON.parse(JSON.stringify(this.compraAEditar));
+              // Mapear idProducto de vuelta a objetos completos para el v-autocomplete
+              compra.detalleCompra = compra.detalleCompra.map((detalle) => {
+                const producto = this.productosDisponibles.find(
+                  (p) => p.id === detalle.idProducto
+                );
+                return {
+                  ...detalle,
+                  idProducto: producto || null, // Asignar el objeto completo o null
+                };
+              });
+              this.form = compra;
+            } else {
+              this.form = this.resetearFormulario();
+            }
+            // Limpiar errores al abrir o resetear el diálogo
+            this.errors = {};
+            this.errorsDetalle = [];
+            this.errorGeneral = "";
           });
-
-          this.form = venta;
-        } else {
-          this.form = this.resetearFormulario();
         }
-        this.errors = {};
-        this.errorsDetalle = [];
-        this.errorGeneral = "";
       },
       immediate: true,
-    },
-    dialog(val) {
-      if (val) {
-        this.cargarProductos(); // Cargar productos solo cuando el diálogo se abre
-      }
     },
   },
   methods: {
     resetearFormulario() {
       return {
         id: null,
-        formaPago: "",
-        detallesVenta: [],
+        proveedor: "",
+        detalleCompra: [],
+        monto: 0,
       };
     },
     cerrarDialogo() {
@@ -174,7 +168,7 @@ export default {
       try {
         const response = await listProductosService();
         this.productosDisponibles = response.data.filter(
-          (p) => !p.softDelete && p.tipoProducto !== "INSUMO"
+          (p) => !p.softDelete && p.tipoProducto !== "FOTOCOPIA"
         ); // Solo productos activos
       } catch (error) {
         console.error("Error al cargar productos:", error);
@@ -182,10 +176,11 @@ export default {
       }
     },
     agregarDetalle() {
-      this.form.detallesVenta.push({ idProducto: null, cantidad: 1 });
+      // idProducto se inicializa como null, el v-autocomplete lo reemplazará con el objeto completo
+      this.form.detalleCompra.push({ idProducto: null, cantidad: 1, nombreProducto: '' });
     },
     eliminarDetalle(index) {
-      this.form.detallesVenta.splice(index, 1);
+      this.form.detalleCompra.splice(index, 1);
       if (this.errorsDetalle[index]) {
         this.errorsDetalle.splice(index, 1);
       }
@@ -201,9 +196,16 @@ export default {
       return nombre.includes(query);
     },
     onProductoSeleccionado(index) {
-      const producto = this.form.detallesVenta[index].idProducto;
-      if (producto && producto.id) {
-        this.form.detallesVenta[index].idProducto = producto.id;
+      // Cuando return-object es true, idProducto es el objeto completo
+      const selectedProduct = this.form.detalleCompra[index].idProducto;
+      if (selectedProduct && selectedProduct.id) {
+        // Asignamos el ID para el envío al backend y el nombre para visualización si es necesario
+        this.form.detalleCompra[index].idProducto = selectedProduct.id;
+        this.form.detalleCompra[index].nombreProducto = selectedProduct.nombre;
+      } else {
+        // Si la selección se borra o es inválida
+        this.form.detalleCompra[index].idProducto = null;
+        this.form.detalleCompra[index].nombreProducto = '';
       }
     },
     async guardar() {
@@ -212,28 +214,30 @@ export default {
       this.errorsDetalle = [];
       try {
         const dataToSend = {
-          ...this.form,
-          detallesVenta: this.form.detallesVenta.map((det) => ({
-            idProducto: det.idProducto?.id || det.idProducto,
+          proveedor: this.form.proveedor,
+          detalleCompra: this.form.detalleCompra.map((det) => ({
+            // Asegurarse de que idProducto sea solo el ID para el backend
+            idProducto: typeof det.idProducto === 'object' ? det.idProducto.id : det.idProducto,
             cantidad: det.cantidad,
           })),
+          monto: this.form.monto,
         };
 
         if (this.form.id) {
-          await updateVentaService(this.form.id, dataToSend);
+          await updateCompraService(this.form.id, dataToSend);
         } else {
-          await createVentaService(dataToSend);
+          await createCompraService(dataToSend);
         }
 
-        this.$emit("venta-guardada");
+        this.$emit("compra-guardada");
         this.cerrarDialogo();
       } catch (error) {
         if (error.response && error.response.data) {
           const data = error.response.data;
           if (data.messages) {
             for (const key in data.messages) {
-              if (key.startsWith("detallesVenta[")) {
-                const match = key.match(/detallesVenta\[(\d+)\]\.(\w+)/);
+              if (key.startsWith("detalleCompra[")) {
+                const match = key.match(/detalleCompra\[(\d+)\]\.(\w+)/);
                 if (match) {
                   const index = parseInt(match[1]);
                   const field = match[2];

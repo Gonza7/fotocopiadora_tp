@@ -8,3 +8,4 @@ export const createCompraService = (data) => axios.post(`${API_URL}`, data);
 export const updateCompraService = (id, data) => axios.put(`${API_URL}/${id}`, data);
 export const deleteCompraService = (id) => axios.put(`${API_URL}/delete/${id}`);
 export const activateCompraService = (id) => axios.put(`${API_URL}/activate/${id}`);
+export const updateEstadoCompraService = (idCompra, idDetalle) => axios.put(`${API_URL}/status/${idCompra}/${idDetalle}`);

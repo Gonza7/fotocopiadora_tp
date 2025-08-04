@@ -82,8 +82,7 @@ const menuItems = [
   { title: 'Ventas', icon: 'mdi-cash-register', to: '/ventas' },
   { title: 'Compras', icon: 'mdi-cart', to: '/compras' },
   { title: 'Productos', icon: 'mdi-package-variant', to: '/productos' },
-  { title: 'Usuarios', icon: 'mdi-account', to: '/usuarios'},
-  { title: 'Test', icon: 'mdi-test-tube', to: '/test' }
+  { title: 'Usuarios', icon: 'mdi-account', to: '/usuarios'}
 ]
 
 const theme = useTheme()
