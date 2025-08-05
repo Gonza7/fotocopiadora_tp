@@ -205,7 +205,7 @@ export default {
           id: null,
           proveedor: "",
           detalleCompra: [],
-          monto: 0,
+          monto: null,
         };
       }
       this.dialog = true;

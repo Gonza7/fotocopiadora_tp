@@ -1,66 +1,31 @@
 <template>
-  <v-dialog
-    :model-value="dialog"
-    @update:model-value="cerrarDialogo"
-    max-width="800px"
-  >
+  <v-dialog :model-value="dialog" @update:model-value="cerrarDialogo" max-width="800px">
     <v-card>
       <v-card-title>
-        <span class="text-h6"
-          >{{ form.id ? "Editar" : "Registrar" }} Compra</span
-        >
+        <span class="text-h6">{{ form.id ? "Editar" : "Registrar" }} Compra</span>
       </v-card-title>
 
       <v-card-text>
         <v-form ref="formRef">
-          <v-text-field
-            v-model="form.proveedor"
-            label="Proveedor"
-            required
-            :error-messages="errors.proveedor ? [errors.proveedor] : []"
-            @input="errors.proveedor = null"
-          />
-
+          <v-text-field v-model="form.proveedor" label="Proveedor" required
+            :error-messages="errors.proveedor ? [errors.proveedor] : []" @input="errors.proveedor = null" />
+          <v-text-field v-model.number="form.monto" label="Monto total" type="text" inputmode="numeric" min="1" required
+            :error-messages="errors.monto ? [errors.monto] : []" @input="errors.monto = null" />
           <h3 class="mt-4 mb-2">Detalles de Compra</h3>
-          <div
-            v-for="(detalle, index) in form.detalleCompra"
-            :key="index"
-            class="d-flex align-center gap-2 mb-2"
-          >
-            <v-autocomplete
-              v-model="detalle.idProducto"
-              :items="productosDisponibles"
-              item-title="nombre"
-              item-value="id"
-              label="Producto"
-              placeholder="Escribe para buscar un producto"
-              class="flex-grow-1"
-              required
-              :error-messages="
-                errorsDetalle[index]?.idProducto
-                  ? [errorsDetalle[index].idProducto]
-                  : []
-              "
-              @update:model-value="limpiarErrorDetalle(index, 'idProducto')"
-              return-object
-              :filter="customFilter"
-              @change="onProductoSeleccionado(index)"
-            />
-            <v-text-field
-              v-model.number="detalle.cantidad"
-              label="Cantidad"
-              type="number"
-              min="1"
-              class="flex-grow-0"
-              style="width: 100px"
-              required
-              :error-messages="
-                errorsDetalle[index]?.cantidad
-                  ? [errorsDetalle[index].cantidad]
-                  : []
-              "
-              @input="limpiarErrorDetalle(index, 'cantidad')"
-            />
+          <div v-for="(detalle, index) in form.detalleCompra" :key="index" class="d-flex align-center gap-2 mb-2">
+            <v-autocomplete v-model="detalle.idProducto" :items="productosDisponibles" item-title="nombre"
+              item-value="id" label="Producto" placeholder="Escribe para buscar un producto" class="flex-grow-1"
+              required :error-messages="errorsDetalle[index]?.idProducto
+                ? [errorsDetalle[index].idProducto]
+                : []
+                " @update:model-value="limpiarErrorDetalle(index, 'idProducto')" return-object :filter="customFilter"
+              @change="onProductoSeleccionado(index)" />
+            <v-text-field v-model.number="detalle.cantidad" label="Cantidad" type="text" inputmode="numeric"
+              class="flex-grow-1" style="width: 100px" required :error-messages="errorsDetalle[index]?.cantidad
+                ? [errorsDetalle[index].cantidad]
+                : []
+                " @input="limpiarErrorDetalle(index, 'cantidad')" />
+
             <v-btn icon @click="eliminarDetalle(index)">
               <v-icon>mdi-delete</v-icon>
             </v-btn>
@@ -69,14 +34,7 @@
             Agregar Producto
           </v-btn>
 
-          <v-alert
-            v-if="errorGeneral"
-            type="error"
-            class="mt-4"
-            variant="tonal"
-            dismissible
-            @input="errorGeneral = ''"
-          >
+          <v-alert v-if="errorGeneral" type="error" class="mt-4" variant="tonal" dismissible @input="errorGeneral = ''">
             {{ errorGeneral }}
           </v-alert>
         </v-form>
@@ -158,7 +116,7 @@ export default {
         id: null,
         proveedor: "",
         detalleCompra: [],
-        monto: 0,
+        monto: null,
       };
     },
     cerrarDialogo() {
@@ -176,9 +134,10 @@ export default {
       }
     },
     agregarDetalle() {
-      // idProducto se inicializa como null, el v-autocomplete lo reemplazará con el objeto completo
-      this.form.detalleCompra.push({ idProducto: null, cantidad: 1, nombreProducto: '' });
-    },
+      this.form.detalleCompra.push({ idProducto: null, cantidad: null, nombreProducto: '' });
+      this.errorGeneral = ""; // limpiamos error de "Debe agregar al menos un producto"
+    }
+    ,
     eliminarDetalle(index) {
       this.form.detalleCompra.splice(index, 1);
       if (this.errorsDetalle[index]) {
@@ -212,13 +171,35 @@ export default {
       this.errors = {};
       this.errorGeneral = "";
       this.errorsDetalle = [];
+
+
+      // Validar que haya al menos un detalle
+      if (this.form.detalleCompra.length === 0) {
+        this.errorGeneral = "Debe agregar al menos un producto a la compra.";
+        return;
+      }
+
+      // Validar detalles individuales
+      const erroresDetalle = this.form.detalleCompra.map((detalle, i) => {
+        const error = {};
+        if (!detalle.idProducto) error.idProducto = "Debe seleccionar un producto.";
+        if (!detalle.cantidad || detalle.cantidad <= 0)
+          error.cantidad = "La cantidad debe ser mayor a 0.";
+        return error;
+      });
+
+      const hayErrores = erroresDetalle.some(error => Object.keys(error).length > 0);
+      if (hayErrores) {
+        this.errorsDetalle = erroresDetalle;
+        return;
+      }
+
       try {
         const dataToSend = {
           proveedor: this.form.proveedor,
           detalleCompra: this.form.detalleCompra.map((det) => ({
-            // Asegurarse de que idProducto sea solo el ID para el backend
-            idProducto: typeof det.idProducto === 'object' ? det.idProducto.id : det.idProducto,
-            cantidad: det.cantidad,
+            idProducto: typeof det.idProducto === "object" ? det.idProducto.id : det.idProducto,
+            cantidad: Number(det.cantidad),
           })),
           monto: this.form.monto,
         };
@@ -232,6 +213,7 @@ export default {
         this.$emit("compra-guardada");
         this.cerrarDialogo();
       } catch (error) {
+        // manejo de errores como ya lo tenías
         if (error.response && error.response.data) {
           const data = error.response.data;
           if (data.messages) {
@@ -241,8 +223,7 @@ export default {
                 if (match) {
                   const index = parseInt(match[1]);
                   const field = match[2];
-                  if (!this.errorsDetalle[index])
-                    this.errorsDetalle[index] = {};
+                  if (!this.errorsDetalle[index]) this.errorsDetalle[index] = {};
                   this.errorsDetalle[index][field] = data.messages[key];
                 }
               } else {
@@ -253,7 +234,7 @@ export default {
             this.errorGeneral = data.message;
           } else if (error.response.status === 400) {
             this.errorGeneral =
-              "Hay errores en los datos enviados. Verificá que todos los campos requeridos estén completos y que los productos seleccionados sean válidos.";
+              "Hay errores en los datos enviados. Verificá los campos requeridos.";
           } else {
             this.errorGeneral = "Ocurrió un error inesperado.";
           }
@@ -262,12 +243,14 @@ export default {
         }
       }
     },
+
   },
 };
 </script>
 
 <style scoped>
 .gap-2 {
-  gap: 8px; /* O el espacio que prefieras para simular gap */
+  gap: 8px;
+  /* O el espacio que prefieras para simular gap */
 }
 </style>

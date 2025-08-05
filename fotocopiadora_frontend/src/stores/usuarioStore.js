@@ -14,4 +14,10 @@ export const useUsuarioStore = defineStore('usuario', {
       localStorage.removeItem('nombre')
     }
   },
+  getters: {
+    // Getter para verificar si el nombre del usuario es 'admin'
+    // Se recomienda usar 'ADMIN' en mayúsculas para evitar errores de case-sensitive
+    isAdmin: (state) => state.nombre && state.nombre.toUpperCase() === 'ADMIN',
+    isAuthenticated: (state) => !!state.nombre,
+  }
 })

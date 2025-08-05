@@ -1,68 +1,29 @@
 <template>
-  <v-dialog
-    :model-value="dialog"
-    @update:model-value="cerrarDialogo"
-    max-width="800px"
-  >
+  <v-dialog :model-value="dialog" @update:model-value="cerrarDialogo" max-width="800px">
     <v-card>
       <v-card-title>
-        <span class="text-h6"
-          >{{ form.id ? "Editar" : "Registrar" }} Venta</span
-        >
+        <span class="text-h6">{{ form.id ? "Editar" : "Registrar" }} Venta</span>
       </v-card-title>
 
       <v-card-text>
         <v-form ref="formRef">
-          <v-select
-            v-model="form.formaPago"
-            :items="formasPago"
-            item-title="label"
-            item-value="value"
-            label="Forma de Pago"
-            required
-            :error-messages="errors.formaPago ? [errors.formaPago] : []"
-            @input="errors.formaPago = null"
-          />
+          <v-select v-model="form.formaPago" :items="formasPago" item-title="label" item-value="value"
+            label="Forma de Pago" required :error-messages="errors.formaPago ? [errors.formaPago] : []"
+            @input="errors.formaPago = null" />
 
           <h3 class="mt-4 mb-2">Detalles de Venta</h3>
-          <div
-            v-for="(detalle, index) in form.detallesVenta"
-            :key="index"
-            class="d-flex align-center gap-2 mb-2"
-          >
-            <v-autocomplete
-              v-model="detalle.idProducto"
-              :items="productosDisponibles"
-              item-title="nombre"
-              item-value="id"
-              label="Producto"
-              class="flex-grow-1"
-              required
-              :error-messages="
-                errorsDetalle[index]?.idProducto
-                  ? [errorsDetalle[index].idProducto]
-                  : []
-              "
-              @update:model-value="limpiarErrorDetalle(index, 'idProducto')"
-              return-object
-              :filter="customFilter"
-              @change="onProductoSeleccionado(index)"
-            />
-            <v-text-field
-              v-model.number="detalle.cantidad"
-              label="Cantidad"
-              type="number"
-              min="1"
-              class="flex-grow-0"
-              style="width: 100px"
-              required
-              :error-messages="
-                errorsDetalle[index]?.cantidad
-                  ? [errorsDetalle[index].cantidad]
-                  : []
-              "
-              @input="limpiarErrorDetalle(index, 'cantidad')"
-            />
+          <div v-for="(detalle, index) in form.detallesVenta" :key="index" class="d-flex align-center gap-2 mb-2">
+            <v-autocomplete v-model="detalle.idProducto" :items="productosDisponibles" item-title="nombre"
+              item-value="id" label="Producto" class="flex-grow-2" required :error-messages="errorsDetalle[index]?.idProducto
+                ? [errorsDetalle[index].idProducto]
+                : []
+                " @update:model-value="limpiarErrorDetalle(index, 'idProducto')" return-object :filter="customFilter"
+              @change="onProductoSeleccionado(index)" />
+            <v-text-field v-model.number="detalle.cantidad" label="Cantidad" type="text" inputmode="numeric" min="1"
+              class="flex-grow-1" style="width: 100px" required :error-messages="errorsDetalle[index]?.cantidad
+                ? [errorsDetalle[index].cantidad]
+                : []
+                " @input="limpiarErrorDetalle(index, 'cantidad')" />
             <v-btn icon @click="eliminarDetalle(index)">
               <v-icon>mdi-delete</v-icon>
             </v-btn>
@@ -71,14 +32,7 @@
             Agregar Producto
           </v-btn>
 
-          <v-alert
-            v-if="errorGeneral"
-            type="error"
-            class="mt-4"
-            variant="tonal"
-            dismissible
-            @input="errorGeneral = ''"
-          >
+          <v-alert v-if="errorGeneral" type="error" class="mt-4" variant="tonal" dismissible @input="errorGeneral = ''">
             {{ errorGeneral }}
           </v-alert>
         </v-form>
@@ -182,7 +136,7 @@ export default {
       }
     },
     agregarDetalle() {
-      this.form.detallesVenta.push({ idProducto: null, cantidad: 1 });
+      this.form.detallesVenta.push({ idProducto: null, cantidad: null });
     },
     eliminarDetalle(index) {
       this.form.detallesVenta.splice(index, 1);
@@ -210,6 +164,31 @@ export default {
       this.errors = {};
       this.errorGeneral = "";
       this.errorsDetalle = [];
+
+      // ⚠️ Validación: debe haber al menos un detalle
+      if (!this.form.detallesVenta.length) {
+        this.errorGeneral = "Debe agregar al menos un producto a la venta.";
+        return;
+      }
+      if (!this.form.formaPago) {
+        this.errors.formaPago = "La forma de pago es requerida.";
+      }
+      // 🧪 Validar cada detalle
+      const errores = this.form.detallesVenta.map((detalle) => {
+        const error = {};
+        if (!detalle.idProducto || (typeof detalle.idProducto === 'object' && !detalle.idProducto.id)) {
+          error.idProducto = "Debe seleccionar un producto válido.";
+        }
+        if (
+          detalle.cantidad == null ||
+          isNaN(detalle.cantidad) ||
+          detalle.cantidad < 1
+        ) {
+          error.cantidad = "La cantidad debe ser mayor o igual a 1.";
+        }
+        return error;
+      });
+
       try {
         const dataToSend = {
           ...this.form,
@@ -257,13 +236,15 @@ export default {
           this.errorGeneral = "No se pudo conectar con el servidor.";
         }
       }
-    },
+    }
+
   },
 };
 </script>
 
 <style scoped>
 .gap-2 {
-  gap: 8px; /* O el espacio que prefieras para simular gap */
+  gap: 8px;
+  /* O el espacio que prefieras para simular gap */
 }
 </style>

@@ -1,9 +1,18 @@
 <template>
   <v-app>
-    <h1>Usuarios</h1>
+    <v-main>
+      <UsuarioList />
+    </v-main>
   </v-app>
 </template>
 
-<script setup>
+<script>
+import UsuarioList from '@/components/usuario/UsuarioList.vue';
 
+export default {
+  name: 'App',
+  components: {
+    UsuarioList,
+  },
+};
 </script>

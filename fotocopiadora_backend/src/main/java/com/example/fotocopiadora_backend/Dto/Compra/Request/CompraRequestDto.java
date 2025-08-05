@@ -21,6 +21,7 @@ public class CompraRequestDto {
     @Valid
     private List<DetalleCompraRequestDto> detalleCompra;
 
-    @Min(value = 0, message = "El monto no puede ser negativo")
+    @Min(value = 1, message = "El monto no puede ser menor a 1")
+    @NotNull(message = "El monto no puede ser nulo")
     private double monto;
 }
