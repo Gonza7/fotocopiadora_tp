@@ -12,6 +12,7 @@ import com.example.fotocopiadora_backend.Dto.Producto.Response.ProductoVentaResp
 import com.example.fotocopiadora_backend.Entity.Producto.PrecioFotocopia;
 import com.example.fotocopiadora_backend.Entity.Producto.Producto;
 import com.example.fotocopiadora_backend.Enum.TipoProducto;
+import com.example.fotocopiadora_backend.Exception.BusinessException;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
@@ -84,7 +85,7 @@ public class ProductoMapper {
         } else if (dto instanceof FotocopiaRequestDto fotocopiaDto) {
             return fromFotocopiaDto(fotocopiaDto);
         } else {
-            throw new IllegalArgumentException("Tipo de DTO no soportado");
+            throw new BusinessException("Tipo de DTO no soportado");
         }
     }
 
@@ -157,7 +158,7 @@ public class ProductoMapper {
         Set<Integer> minimos = new HashSet<>();
         for (PrecioFotocopiaDto precio : preciosFotocopia) {
             if (!minimos.add(precio.getMinimo())) {
-                throw new IllegalArgumentException("No puede haber dos precios con el mismo valor mínimo para una fotocopia");
+                throw new BusinessException("No puede haber dos precios con el mismo valor mínimo para una fotocopia");
             }
         }
     }

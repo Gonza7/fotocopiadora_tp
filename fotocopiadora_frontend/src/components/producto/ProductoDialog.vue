@@ -7,39 +7,53 @@
 
       <v-card-text>
         <v-form ref="formRef">
+          <!-- Nombre -->
           <v-text-field v-model="form.nombre" label="Nombre" required
             :error-messages="errors.nombre ? [errors.nombre] : []" @input="errors.nombre = null" />
 
+          <!-- Tipo de Producto -->
           <v-select v-model="form.tipo" :items="tipos" item-title="label" item-value="value" label="Tipo de Producto"
-            required :disabled="form.id != null" :error-messages="errors.tipoProducto ? [errors.tipoProducto] : []"
+            required :disabled="form.id != null" :error-messages="errors.tipo ? [errors.tipo] : []"
             @update:model-value="handleTipoChange" />
 
+          <!-- Precio Unitario (solo para PRODUCTO_VENTA) -->
           <v-text-field v-if="form.tipo === 'PRODUCTO_VENTA'" v-model.number="form.precioUnitario"
             label="Precio Unitario" type="text" inputmode="numeric" min="0" required
             :error-messages="errors.precioUnitario ? [errors.precioUnitario] : []"
             @input="errors.precioUnitario = null" />
 
+          <!-- Stock (PRODUCTO_VENTA o INSUMO) -->
           <v-text-field v-if="form.tipo === 'PRODUCTO_VENTA' || form.tipo === 'INSUMO'" v-model.number="form.stock"
             label="Stock" type="text" inputmode="numeric" min="0" :error-messages="errors.stock ? [errors.stock] : []"
             @input="errors.stock = null" />
 
+          <!-- Lista de Precios (solo FOTOCOPIA) -->
           <div v-if="form.tipo === 'FOTOCOPIA'">
             <div v-for="(precio, index) in form.listaPrecios" :key="index" class="d-flex gap-2 align-center mb-2">
+              <!-- Cantidad mínima -->
               <v-text-field v-model.number="precio.minimo" label="Cantidad mínima" type="text" inputmode="numeric"
                 class="flex-grow-1" :error-messages="errorsPrecios[index]?.minimo ? [errorsPrecios[index].minimo] : []"
                 @input="clearPrecioError(index, 'minimo')" />
+
+              <!-- Precio unitario -->
               <v-text-field v-model.number="precio.precioUnitario" label="Precio unitario" type="text"
                 inputmode="numeric" class="flex-grow-1"
                 :error-messages="errorsPrecios[index]?.precioUnitario ? [errorsPrecios[index].precioUnitario] : []"
                 @input="clearPrecioError(index, 'precioUnitario')" />
+
+              <!-- Botón eliminar -->
               <v-btn icon @click="removePrecio(index)">
                 <v-icon>mdi-delete</v-icon>
               </v-btn>
             </div>
+
+            <!-- Botón agregar precio -->
             <v-btn class="mt-2" @click="addPrecio" small>
               Agregar precio
             </v-btn>
           </div>
+
+          <!-- Alerta de error general -->
           <v-alert v-if="generalError" type="error" class="mt-4" variant="tonal" dismissible @input="generalError = ''">
             {{ generalError }}
           </v-alert>
@@ -55,8 +69,10 @@
   </v-dialog>
 </template>
 
+
 <script>
 import { createProductoService, updateProductoService } from "@/services/productoService";
+import { handleBackendError } from "@/utils/ErrorHandler.js";
 
 export default {
   props: {
@@ -125,11 +141,9 @@ export default {
     },
     addPrecio() {
       this.form.listaPrecios.push({ minimo: null, precioUnitario: null });
-    }
-    ,
+    },
     removePrecio(index) {
       this.form.listaPrecios.splice(index, 1);
-      // Eliminar errores asociados si los hubiera
       if (this.errorsPrecios[index]) {
         this.errorsPrecios.splice(index, 1);
       }
@@ -144,7 +158,11 @@ export default {
       this.generalError = "";
       this.errorsPrecios = [];
 
-
+      if (!this.form.tipo) {
+        this.errors.tipo = "Debe seleccionar un tipo de producto.";
+        return;
+      }
+      
       if (this.form.tipo === "FOTOCOPIA" && this.form.listaPrecios.length === 0) {
         this.generalError = "Debe agregar al menos un precio.";
         return;
@@ -188,35 +206,18 @@ export default {
 
         this.$emit("product-saved");
         this.closeDialog();
-
       } catch (error) {
-        if (error.response && error.response.status === 400) {
-          const responseErrors = error.response.data.errors;
-          if (Array.isArray(responseErrors)) {
-            const errores = responseErrors.map((errorDto) => {
-              const error = {};
-              if (errorDto.minimo) {
-                error.minimo = errorDto.minimo;
-              }
-              if (errorDto.precioUnitario) {
-                error.precioUnitario = errorDto.precioUnitario;
-              }
-              return error;
-            });
-            this.errorsPrecios = errores;
-          } else {
-            this.errors = responseErrors || {};
-            this.generalError = error.response.data.message || "Error de validación";
-          }
-        } else {
-          this.generalError = "Ocurrió un error al guardar el producto.";
-        }
+        handleBackendError(error, {
+          setFieldErrors: (errs) => { this.errors = errs; },
+          setListaErrores: (errs) => { this.errorsPrecios = errs; },
+          setGeneralError: (msg) => { this.generalError = msg; },
+        });
       }
     }
-
   },
 };
 </script>
+
 
 <style scoped>
 .gap-2 {

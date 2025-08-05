@@ -29,21 +29,35 @@ public class GlobalExceptionHandler {
     // NUEVO: Validaciones fallidas
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> handleValidationException(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = ex.getBindingResult()
+        Map<String, String> messages = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
                 .collect(Collectors.toMap(
                         FieldError::getField,
                         FieldError::getDefaultMessage,
-                        (existing, replacement) -> existing  // En caso de campos duplicados, se queda con el primero
+                        (existing, replacement) -> existing
                 ));
 
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now());
         body.put("status", HttpStatus.BAD_REQUEST.value());
-        body.put("error", "Errores de validación");
-        body.put("messages", errors);
+        body.put("message", "Error de validación");
+        body.put("messages", messages); // <-- Cambiado a "messages"
 
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<Object> handleBusinessException(BusinessException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("message", ex.getMessage());
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ListException.class)
+    public ResponseEntity<Object> handleListaPreciosException(ListException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("errors", ex.getErrores());
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
